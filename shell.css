@@ -1,0 +1,66 @@
+@font-face {
+	font-family: 'Iosevka Web';
+	font-display: swap;
+	font-weight: 400;
+	font-stretch: normal;
+	font-style: normal;
+	src: url('ttf/iosevka-regular.ttf') format('truetype'), url('woff2/iosevka-regular.woff2') format('woff2');
+}
+
+:root {
+  --main-bg-color: #202020;
+  --main-text-color: #d0d0d0;
+  --alt-text-color: #7e8d50;
+  --invalid-text-color: #ac4142;
+  --main-font-size: 18;
+  --main-font-family: 'Iosevka Web';
+}
+
+* {
+  background-color: var(--main-bg-color);
+  color: var(--main-text-color);
+  font-size: var(--main-font-size);
+  font-family: var(--main-font-family);
+}
+
+p, pre {
+  margin: 0;
+}
+
+#escape {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+#shell .entry-line {
+  display: flex;
+  flex-direction: row;
+}
+
+#entry.invalid {
+  color: var(--invalid-text-color);
+}
+
+#shell .ps1 {
+  margin-right: 5px;
+}
+
+.ps1 .user {
+  color: var(--alt-text-color);
+}
+
+.ps1 .domain {
+}
+
+.ps1 .directory {
+  color: var(--alt-text-color);
+}
+
+#entry {
+  border: none;
+  resize: none;
+  outline: none;
+  flex-grow: 1;
+}
+
