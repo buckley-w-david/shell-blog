@@ -29,6 +29,11 @@ pre {
   margin: 0;
 }
 
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
 #escape {
   position: absolute;
   top: 0;
