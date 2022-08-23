@@ -92,7 +92,6 @@ const cat = (argc, argv, env) => {
   let contents = [];
   for (let file of argv) {
     let target = absolute(currentDirectory, file);
-    console.log(currentDirectory, file, target);
 
     if (Object.keys(fileSystem.files).includes(target)) {
       contents.push(fileSystem.files[target]);
