@@ -8,7 +8,7 @@ dist/index.html: $(shell find site -type f)
 	scripts/compile-markdown.sh
 	cp -r site/filesystem/blog/assets dist/blog/
 	# TODO: template  escape.md
-	cp -r site/*.{css,html} site/shell site/ttf site/woff2 dist/
+	cp -r site/*.css site/*.html site/shell site/ttf site/woff2 dist/
 	find site/filesystem/ -type f | ./scripts/generate-filysystem.py > dist/shell/filesystem.js
 
 server: dist/index.html
