@@ -1,3 +1,5 @@
+Date: 2020-06-19
+
 ## Background
 
 Warning: Don't use any code I provide or link to in production without giving it a serious think.

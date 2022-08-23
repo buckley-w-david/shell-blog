@@ -1,3 +1,5 @@
+Date: 2020-06-24
+
 ## What is an allRGB image?
 
 I first encountered the concept when I stumbled across [allrgb.com](https://allrgb.com/).

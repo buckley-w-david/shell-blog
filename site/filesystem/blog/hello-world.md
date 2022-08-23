@@ -1,3 +1,5 @@
+Date: 2020-06-19
+
 This is the first blog post... yay!
 
 For a while I've had the ambition that I should try my hand at writing a blog, so this is me finally getting around to it.

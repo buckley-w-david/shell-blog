@@ -1,3 +1,5 @@
+Date: 2020-10-10
+
 Warning: Running arbitrary untrusted code is a bad idea, use your head.
 
 You can find the source for stacksort [here](https://github.com/buckley-w-david/stacksort).
