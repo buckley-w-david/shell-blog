@@ -1,4 +1,4 @@
-Yeah, the shell-as-a-blog bit is a bit overplayed, I don't blame you for not wanting to bother with it.
+Yeah, the shell-as-a-blog thing is a bit much, I don't blame you for not wanting to bother with it.
 
 You can find versions of all the "files" in the terminal here:
 
