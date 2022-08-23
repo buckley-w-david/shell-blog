@@ -7,6 +7,7 @@ These shell commands are defined internally.  Type \`help\' to see this list.
 No, pipes and input redirection don't work.
 ls [FILE]... - list directory contents
 cat [FILE]... - concatenate files and print on the standard output. Supports Images.
+open [FILE] - open up a given resource in a new tab.
 echo [STRING]... - display a line of text
 cd dirName - Change working directory
 help - What you're looking at
@@ -103,6 +104,22 @@ const cat = (argc, argv, env) => {
   return response(stdout, stderr, status);
 };
 
+const open = (argc, argv, env) => {
+  if (argc !== 1) {
+    return response("", "Too many args for open command", 1);
+  }
+  let target = absolute(env.currentDirectory, argv[0]);
+  if (Object.keys(fileSystem.files).includes(target)) {
+    if (target.slice(-3) === ".md") {
+      target = target.slice(0, -3) + ".html";
+    }
+    window.open(target, "_blank");
+    return success("");
+  } else {
+    return response("", `open: ${argv[0]}: No such file`, 1);
+  }
+};
+
 const echo = (argc, argv, env) => success(argv.join(" "));
 
 export const commands = {
@@ -110,4 +127,5 @@ export const commands = {
   ls: ls,
   echo: echo,
   cat: cat,
+  open: open,
 };
