@@ -133,6 +133,7 @@ entry.addEventListener("keydown", (event) => {
   }
 
   //: exec {{{
+  historyCursor = 0;
   entry.className = "valid";
   const command = entry.value;
   const ps1Clone = ps1.cloneNode(true);
