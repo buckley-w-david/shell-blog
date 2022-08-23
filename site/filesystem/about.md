@@ -9,6 +9,6 @@ Here's some things I've built that I think are neat:
 - [bytecode](https://github.com/buckley-w-david/bytecode): Manually write Python functions using Python bytecode.
 - [Hack in Hack](https://github.com/buckley-w-david/hack-in-hack): An implementation of the Hack virtual machine written in Hack assembly, from the excellent [nand2tetris](https://www.nand2tetris.org/) course.
 
-You might be able to tell from those projects, but my greatest joy in building software comes from designing and implementing interesting APIs to underlying systems.
+You might be able to tell from those projects, but my greatest joy in building software comes from designing and implementing interesting interfaces to underlying systems.
 
 You can find me on [GitHub](https://github.com/buckley-w-david), or contact me by [email](mailto:david@davidbuckley.ca).
