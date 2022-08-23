@@ -1,28 +1,29 @@
 export const absolute = (currentDirectory, path) => {
-  if (path[0] === "/") {
-    return path;
-  } else if (path.slice(0, 2) == "./") {
-    if (currentDirectory === "/") {
-      return "/" + path.slice(2);
-    } else {
-      return `${currentDirectory}/${path.slice(2)}`;
+    if (path[0] !== "/") {
+        if (currentDirectory === "/") path = `/${path}`
+        else path = `${currentDirectory}/${path}`
     }
-  } else {
-    if (currentDirectory === "/") {
-      return "/" + path;
-    } else {
-      return `${currentDirectory}/${path}`;
+    if (path.slice(-1) === "/" && path !== "/") {
+        path = path.slice(0, -1);
     }
-  }
+
+    let result = path.split("/").reduce((acc, part) => {
+        if (part === ".") return acc;
+        else if (part === "..") return parent(acc);
+        else {
+          if (acc === "/") return "/" + part
+          else return `${acc}/${part}`
+        }
+    });
+
+    return result;
 };
 
 export const parent = (path) => {
   let dirParts = path.split("/").slice(0, -1);
-  if (dirParts.length === 1) {
-    return "/";
-  } else {
-    return dirParts.join("/");
-  }
+
+  if (dirParts.length === 1) return "/";
+  else return dirParts.join("/");
 };
 
 export const expand = (text) => {
