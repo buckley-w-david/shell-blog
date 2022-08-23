@@ -255,6 +255,7 @@ entry.addEventListener("keydown", (event) => {
   //: exec {{{
   entry.className = "valid";
   const command = entry.value;
+  const ps1Clone = ps1.cloneNode(true);
   entry.value = "";
 
   const tokens = tokenize(command).map((token) => expand(token));
@@ -270,7 +271,6 @@ entry.addEventListener("keydown", (event) => {
     const historyLine = document.createElement("div");
     historyLine.className = "entry-line"
 
-    const ps1Clone = ps1.cloneNode(true);
     const historyCommand = document.createElement("p");
     historyCommand.textContent = command;
     historyLine.appendChild(ps1Clone);
