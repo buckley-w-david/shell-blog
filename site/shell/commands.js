@@ -5,12 +5,12 @@ const helpMessage = `\
 davidbuckley.ca pseudo-shell, version 0.1.0
 These shell commands are defined internally.  Type \`help\' to see this list.
 No, pipes and input redirection don't work.
-ls [FILE]... - list directory contents
+ls [FILE]... - list directory contents.
 cat [FILE]... - concatenate files and print on the standard output. Supports Images.
 open [FILE] - open up a given resource in a new tab.
-echo [STRING]... - display a line of text
-cd dirName - Change working directory
-help - What you're looking at
+echo [STRING]... - display a line of text.
+cd dirName - change working directory.
+help - you're looking at it.
 clear - clear the terminal screen\
 `;
 
