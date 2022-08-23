@@ -44,6 +44,7 @@ clear - clear the terminal screen\
 
 
 const absolute = (path) => {
+  //: absolute {{{
   if (path[0] === "/") {
     return path;
   } else if (path.slice(0, 2) == "./") {
@@ -59,15 +60,18 @@ const absolute = (path) => {
       return `${currentDirectory}/${path}`;
     }
   }
+  //: }}}
 };
 
 const parent = (path) => {
+  //: parent {{{
   let dirParts = path.split("/").slice(0, -1);
   if (dirParts.length === 1) {
       return "/";
   } else {
       return dirParts.join("/"); 
   }
+  //: }}}
 }
 
 const exec = (command) => {
@@ -202,17 +206,22 @@ const exec = (command) => {
 };
 
 const expand = (text) => {
+  //: expand {{{
   // TODO apply globbing
   // TODO apply variable expansion
   return text;
+  //: }}}
 };
 
 const tokenize = (text) => {
+  //: tokenize {{{
   // TODO properly split command into tokens (quote handling)
   return text.trim().split(" ");
+  //: }}}
 };
 
 const validate = (text) => {
+  //: validate {{{
   const command = text.split(" ")[0];
   return (
     command === "" ||
@@ -223,6 +232,7 @@ const validate = (text) => {
       )) ||
     fileSystem.executables.includes(command)
   );
+  //: }}}
 };
 
 // TODO autofocus entry
@@ -258,7 +268,7 @@ entry.addEventListener("keydown", (event) => {
   const ps1Clone = ps1.cloneNode(true);
   entry.value = "";
 
-  const tokens = tokenize(command).map((token) => expand(token));
+  const tokens = tokenize(expand(command));
 
   history.push(command);
   if (tokens[0] == "clear") {
