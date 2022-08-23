@@ -8,3 +8,9 @@ body {
   margin: 0 auto;
   padding: 2.25rem;
 }
+
+#corner {
+  position: absolute;
+  top: 0;
+  right: 0;
+}

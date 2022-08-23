@@ -68,7 +68,7 @@ The general idea is as follows:
 
 Figure 1: Mandrill
 
-![](assets/mandrill-rgb.webp =)
+![](assets/mandrill-rgb.webp)
 
 Figure 2: Not the greatest reproduction, but it is recognizable.
 

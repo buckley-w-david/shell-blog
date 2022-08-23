@@ -65,3 +65,8 @@ pre {
   outline: none;
   flex-grow: 1;
 }
+
+img {
+  max-width: 50%;
+  max-height: 50vh;
+}

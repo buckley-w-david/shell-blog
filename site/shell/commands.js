@@ -6,7 +6,7 @@ davidbuckley.ca pseudo-shell, version 0.1.0
 These shell commands are defined internally.  Type \`help\' to see this list.
 No, pipes and input redirection don't work.
 ls [FILE]... - list directory contents
-cat [FILE]... - concatenate files and print on the standard output
+cat [FILE]... - concatenate files and print on the standard output. Supports Images.
 echo [STRING]... - display a line of text
 cd dirName - Change working directory
 help - What you're looking at
@@ -14,7 +14,7 @@ clear - clear the terminal screen\
 `;
 
 const response = (stdout, stderr, status) => {
-  return { stdout: stdout, stderr: stderr, status: status };
+  return { stdout: stdout, stderr: stderr, statusCode: status };
 };
 const success = (stdout) => response(stdout, undefined, 0);
 
@@ -34,7 +34,18 @@ const ls = (argc, argv, env) => {
 
   let matches = {};
   for (let target of targets) {
-    const path = absolute(currentDirectory, target);
+    let path = absolute(currentDirectory, target);
+
+    // Remove "/" characters at the end of directories
+    // It's a bit of a hack, but meh
+    if (
+      path !== "/" &&
+      path.slice(-1) === "/" &&
+      Object.keys(fileSystem.dirs).includes(path.slice(0, -1))
+    ) {
+      path = path.replace(/\/$/, "");
+    }
+
     if (Object.keys(fileSystem.dirs).includes(path)) {
       if (matches[path] === undefined) {
         matches[path] = [...fileSystem.dirs[path]];

@@ -8,6 +8,14 @@ const shell = document.getElementById("shell");
 const entry = document.getElementById("entry");
 const output = document.getElementById("history");
 
+// Whenever something changes in the terminal, we scoll down (to keep the entry in view)
+const config = { attributes: true, childList: true, subtree: true };
+const observer = new MutationObserver((mutationList, observer) => {
+  shell.scrollIntoView(false);
+});
+// Start observing the target node for configured mutations
+observer.observe(output, config);
+
 const entryLine = shell.querySelector(".entry-line");
 const ps1 = shell.querySelector(".ps1");
 const directory = shell.querySelector(".directory");
@@ -152,10 +160,12 @@ entry.addEventListener("keydown", (event) => {
     item.className = `status-${result.statusCode}`;
 
     const resultPart = document.createElement("pre");
+    let content = "";
     if (result.stderr !== undefined) {
-      resultPart.appendChild(document.createTextNode(result.stderr + "\n"));
+      content += result.stderr + "\n";
     }
-    resultPart.appendChild(document.createTextNode(result.stdout));
+    content += result.stdout;
+    resultPart.innerHTML = content;
     item.appendChild(historyLine);
     item.appendChild(resultPart);
     output.appendChild(item);
