@@ -64,11 +64,11 @@ The general idea is as follows:
 
 ---
 
-![](assets/mandrill.jpg)
+<img src="/blog/assets/mandrill.jpg">
 
 Figure 1: Mandrill
 
-![](assets/mandrill-rgb.webp)
+<img src="/blog/assets/mandrill-rgb.webp">
 
 Figure 2: Not the greatest reproduction, but it is recognizable.
 
@@ -80,13 +80,13 @@ It turns out that red, then green, then blue is rarely a good strategy.
 
 Note: If you actually downloaded and tested the images embeded in this page, you'd find that they actually do not contain all RGB values uniquely, but this is just because they have been compressed to reduce the page weight. (You can download full examples here)[https://www.dropbox.com/sh/gjp1wsf8ubvzfl8/AAD27FD_RgjjItuyK3eMoFdca?dl=0].
 
-![](assets/mandrill-brgc.webp)
+<img src="/blog/assets/mandrill-brgc.webp">
 
 Figure 3: This example is likely the best of the methods I ran the mandrill image through. It sorts the images by blue, red, then green with a twist that part of the computation is purposly allowed to overflow. Originally this strategy was a bug with a previous implementation, but after looking at the results I noticed that it often produced nice looking images, so I decided to keep the bugged behavior as one of the options.
 
 ---
 
-![](assets/mandrill-avg.webp)
+<img src="/blog/assets/mandrill-avg.webp">
 
 Figure 4: It's a bit boring, but a method that almost always produces a good looking image is to take the average value of the red, green, and blue value for each pixel and use that as the criteria by which the lists are sorted.
 
