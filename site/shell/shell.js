@@ -15,7 +15,7 @@ const directory = shell.querySelector(".directory");
 let currentDirectory = "/";
 const history = [];
 let historyCursor = 0;
-const builtins = [ ...Object.keys(commands), "cd", "clear"];
+const builtins = [...Object.keys(commands), "cd", "clear"];
 const variables = { PWD: "/" };
 
 const abs = (path) => absolute(currentDirectory, path);

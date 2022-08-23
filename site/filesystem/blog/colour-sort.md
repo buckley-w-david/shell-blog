@@ -6,13 +6,13 @@ I first encountered the concept when I stumbled across [allrgb.com](https://allr
 
 As I assume would be the case for most developers, after the idea was presented to me I started to contemplate how I might go about transforming an image such that it meets that criteria but remains recognizable.
 
-## colour\_sort
+## colour_sort
 
 Find the code [On my GitHub](https://github.com/buckley-w-david/colour_sort).
 
 ### Technique
 
-The thing that caught my interest about the subject was that I almost immediately came up with a technique that I figured *might* work, but honestly I had no idea until I put together a proof of concept.
+The thing that caught my interest about the subject was that I almost immediately came up with a technique that I figured _might_ work, but honestly I had no idea until I put together a proof of concept.
 
 The idea is simple enough that I can just show you an MVP:
 
@@ -56,12 +56,11 @@ image.save('examples/mandrill-sorted.webp')
 
 - [1] This will come up later, but the important part is that the step to generate a "critera" version of the result can be switch out with other methods (For example switching the order of presidence for red, green, and blue) to produce different end results.
 
-
 The general idea is as follows:
+
 1. Generate an image containing every RGB value exactly once, and sort it by some criteria (In the example above they are sorted by red, then green, then blue values). We will call this the result image.
 2. Generated a mapping to sort the source image by the same criteria. This mapping is then used to generate the reverse mapping; That is how to take the sorted version and turn it back into the orignal source image.
 3. This mapping is then instead used to "unsort" the result image. The output of that is our final image.
-
 
 ---
 
@@ -83,7 +82,7 @@ Note: If you actually downloaded and tested the images embeded in this page, you
 
 ![](assets/mandrill-brgc.webp)
 
-Figure 3: This example is likely the best of the methods I ran the mandrill image through. It sorts the images by blue, red, then green with a twist that part of the computation is purposly allowed to overflow. Originally this strategy was a bug with a previous implementation, but after looking at the results I noticed that it often produced nice looking images, so I decided to keep the bugged behavior as one of the options. 
+Figure 3: This example is likely the best of the methods I ran the mandrill image through. It sorts the images by blue, red, then green with a twist that part of the computation is purposly allowed to overflow. Originally this strategy was a bug with a previous implementation, but after looking at the results I noticed that it often produced nice looking images, so I decided to keep the bugged behavior as one of the options.
 
 ---
 

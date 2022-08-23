@@ -6,7 +6,7 @@ SQL injection sucks, right? I'm not going to talk about it too much because firs
 
 ```python
 # This is vulnerable to an SQL injection attack
-cursor.execute(f"SELECT * FROM users WHERE id = {id}") 
+cursor.execute(f"SELECT * FROM users WHERE id = {id}")
 ```
 
 ```python
@@ -49,7 +49,7 @@ So for example, if you wanted to do this:
 ```python
 id = 5
 # This is vulnerable to an SQL injection attack
-cursor.execute(f"SELECT * FROM users WHERE id = {id}") 
+cursor.execute(f"SELECT * FROM users WHERE id = {id}")
 ```
 
 You could instead do this:
@@ -58,7 +58,7 @@ You could instead do this:
 import interpolate
 id = 5
 f = interpolate.paramaterize_interpolated_querystring
-cursor.execute(*f("SELECT * FROM users WHERE id = {id}")) 
+cursor.execute(*f("SELECT * FROM users WHERE id = {id}"))
 ```
 
 Which will auto-magically be transformed into:
@@ -83,7 +83,7 @@ outer_locals = outer_frame.frame.f_locals.copy()
 
 This takes advantage of the `inspect` module to reach up into the callers stack frame and retrieve their local variables. This is what allows us to later use these values as part of the call to resolve the interpolation. The `dict` of locals is copied instead of used directly so that we can add to it without polluting the parent namespace.
 
-By using `ast.parse`, the string is parsed as an f-string the same way that python itself does it. `repr` is used for quote escaping so that the code isn't *itself* vulnerable to an injection attack. 
+By using `ast.parse`, the string is parsed as an f-string the same way that python itself does it. `repr` is used for quote escaping so that the code isn't _itself_ vulnerable to an injection attack.
 
 Warning: This is the main reason you shouldn't actually do this, because while I have thought about the issue and attempted to get around it, there are no guarantees that an attacker would not be able to find a way to inject code in such a way that it's run by the python interpreter.
 
@@ -101,7 +101,7 @@ query_values = []
 # An f-string has two parts
 for node in values:
     # Constants, which are just sections of static strings
-    if isinstance(node, _ast.Constant): 
+    if isinstance(node, _ast.Constant):
         paramaterized_query.append(node.value)
     # And FormattedValue's, that have whatever is needed to calculate the result of the interpolation
     elif isinstance(node, _ast.FormattedValue):
@@ -115,7 +115,7 @@ for node in values:
 return (''.join(paramaterized_query), query_values)
 ```
 
-1. Build an assignment statement to store the result of resolving the interpolation (to the `temp_name` variable). 
+1. Build an assignment statement to store the result of resolving the interpolation (to the `temp_name` variable).
 
 2. Switch out the value in our assignment AST with the one from the query f-string
 
@@ -124,7 +124,6 @@ return (''.join(paramaterized_query), query_values)
 This is extremely danger.
 
 But it does work.
-
 
 ```python
 >>> import interpolate
@@ -136,7 +135,7 @@ But it does work.
 ('INSERT INTO users (col1, col2, col3) VALUES (?, ?, ?)', [2, 4, 6])
 >>> def do_something(value):
 ...     return value*5
-... 
+...
 >>> print(f('''INSERT INTO users (col1, col2, col3) VALUES ({do_something(x+7)}, {y+2}, {z+3})'''))
 ('INSERT INTO users (col1, col2, col3) VALUES (?, ?, ?)', [40, 4, 6])
 ```

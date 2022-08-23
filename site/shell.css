@@ -1,10 +1,11 @@
 @font-face {
-	font-family: 'Iosevka Web';
-	font-display: swap;
-	font-weight: 400;
-	font-stretch: normal;
-	font-style: normal;
-	src: url('ttf/iosevka-regular.ttf') format('truetype'), url('woff2/iosevka-regular.woff2') format('woff2');
+  font-family: "Iosevka Web";
+  font-display: swap;
+  font-weight: 400;
+  font-stretch: normal;
+  font-style: normal;
+  src: url("ttf/iosevka-regular.ttf") format("truetype"),
+    url("woff2/iosevka-regular.woff2") format("woff2");
 }
 
 :root {
@@ -13,7 +14,7 @@
   --alt-text-color: #7e8d50;
   --invalid-text-color: #ac4142;
   --main-font-size: 18;
-  --main-font-family: 'Iosevka Web';
+  --main-font-family: "Iosevka Web";
 }
 
 * {
@@ -23,7 +24,8 @@
   font-family: var(--main-font-family);
 }
 
-p, pre {
+p,
+pre {
   margin: 0;
 }
 
@@ -63,4 +65,3 @@ p, pre {
   outline: none;
   flex-grow: 1;
 }
-

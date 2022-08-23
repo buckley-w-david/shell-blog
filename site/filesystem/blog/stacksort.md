@@ -47,7 +47,6 @@ class StackSortFinder(importlib.abc.MetaPathFinder):
 
 `from stacksort import quicksort` will generate a `fullname` of `stacksort.quicksort`, so we check for and strip off the prefix `stacksort.`, return the `ModuleSpec`.
 
-
 ```python
 class StackSortLoader(importlib.abc.Loader):
     def create_module(self, spec):
@@ -59,10 +58,9 @@ class StackSortLoader(importlib.abc.Loader):
 
 The loader needs two methods, `create_module` and `exec_module`. We're not doing anything that requires the `exec_module` method so it's a noop.
 
-`create_module` returns *something* that will do the actual work of fetching and compiling StackOverflow code. This is the object that the user gets from importing. We can use `spec.name` to access the name of what the user was trying to import so we can use that to search for the right code.
+`create_module` returns _something_ that will do the actual work of fetching and compiling StackOverflow code. This is the object that the user gets from importing. We can use `spec.name` to access the name of what the user was trying to import so we can use that to search for the right code.
 
 The code is located in in `_meta/...`. This is to prevent name collisions when a user of the package is trying to import something, since if Python can locate an object with the right name, it will never use our custom `MetaPathFinder`. Unlikely to happen unless we call our modules something like `quicksort`, but I figured it was better to hide them behind something more obscure.
-
 
 ```python
 from stacksort._meta import injector
@@ -86,17 +84,19 @@ By putting the above code chunk in the package's `__init__.py` file, it runs on 
 This part was nothing novel, after a half-second of searching I found [stackapi](https://stackapi.readthedocs.io/en/latest/), which let me leverage the [StackExchange API](https://api.stackexchange.com/).
 
 The main thrust is the following:
+
 1. Search of questions tagged with 'python' and 'sorting', and use whatever the user was trying to import ("quicksort" for instance) as the mysterious "q" parameter.  
-The "q" paramter is "a free form text parameter, will match all question properties based on an undocumented algorithm".
+   The "q" paramter is "a free form text parameter, will match all question properties based on an undocumented algorithm".
 2. Fetch the answers to the questions returned from that search.
 3. loop through those answers, extracting and returning code blocks.
 
-Aside from that is some further bookkeeping involved: 
- - Fetching more questions/answers if no appropriate ones were found.
- - if a `safety_date` has been provided (The default is that the date I put it up on GitHub is used), don't accept any questions/answers that were posted (or edited) after that date. This is a cue I took from Gregory Koberger's implementation that improves safety a bit since it prevents anyone from specifically targetting this library with malicious code since nobody knew about it before now.
- - The function `yield`s the code blocks as it extracts them. This pattern makes it easy to consume all the code blocks by iterating over the generator returned by calling the function. 
- - A friend of mine suggested having the ability to randomize the order of results in some way so that it's not as likely you'll hit the same answer every time. Support for this isn't really fleshed out by there is an option to shuffle the answers.
- - The StackExchange API has a neat concept of filters to request only specific fields. I'm using that to significanly cut down on the amount of data that needs to be downloaded.
+Aside from that is some further bookkeeping involved:
+
+- Fetching more questions/answers if no appropriate ones were found.
+- if a `safety_date` has been provided (The default is that the date I put it up on GitHub is used), don't accept any questions/answers that were posted (or edited) after that date. This is a cue I took from Gregory Koberger's implementation that improves safety a bit since it prevents anyone from specifically targetting this library with malicious code since nobody knew about it before now.
+- The function `yield`s the code blocks as it extracts them. This pattern makes it easy to consume all the code blocks by iterating over the generator returned by calling the function.
+- A friend of mine suggested having the ability to randomize the order of results in some way so that it's not as likely you'll hit the same answer every time. Support for this isn't really fleshed out by there is an option to shuffle the answers.
+- The StackExchange API has a neat concept of filters to request only specific fields. I'm using that to significanly cut down on the amount of data that needs to be downloaded.
 
 ## Dynamic Compilation and Execution
 
@@ -114,7 +114,7 @@ There are a bunch of small details and hueristics I needed to come up with, but 
 4. The returned object is called, the unsorted list is passed to it as an argument.
 5. If none of that caused an exception, a reference to that "working" object is stored, and the result of its execution is returned. Anytime the `StackSortRunner` is called in the future that "working" version will be used without performing another search.
 
-All of the complexity here is in `compile.compile_sorter`. 
+All of the complexity here is in `compile.compile_sorter`.
 
 ### Code Generation and Manipulation
 
@@ -129,6 +129,7 @@ Then we get into the heuristics and manipulations.
 `print` calls are removed, these are pretty common in StackOverflow answers since they're meant to be demonstrations, but who wants their sorting functions to print?
 
 This is done using an `ast.NodeTransformer`. All expressions in the AST are visted, and any that are:
+
 1. `_ast.Expr` instances
 2. Which has an `_ast.Call` instance as its `value`
 3. Which has an `_ast.Name` value as its `func`
@@ -146,6 +147,7 @@ if not any(isinstance(node, _ast.FunctionDef) for node in new_tree.body):
 ```
 
 If it does define at least one function, it is compiled and passed into an instance of `StackRunner` which takes things from there:
+
 ```python
     ...
         compiled_code = compile(ast.fix_missing_locations(new_tree), '<StackOverflow>', 'exec')
@@ -176,9 +178,9 @@ Since each code block may name it's unsorted list differently, and whatever name
 Originally the plan was:
 
 - Scan for usages of variables that have not been declared
-    - If there is 1, you have found the parameter name
-    - If there are 0, look for a variable that was initialized to a list
-    - If there are more than 1, abort
+  - If there is 1, you have found the parameter name
+  - If there are 0, look for a variable that was initialized to a list
+  - If there are more than 1, abort
 
 But once I actually got to that, I found that "Scan for usages of variables that have not been declared" is harder than it might first seem.
 
@@ -210,9 +212,9 @@ exec(compiled_code, globals())
 
 Because of the code generation/manipulation work, we know now that there is now at least one function defined (in the module's global scope).
 
-The next thing to figure out is *which function*?
+The next thing to figure out is _which function_?
 
-The code block many (and often does) define multiple functions, so we now scan the AST for *entrypoints*.
+The code block many (and often does) define multiple functions, so we now scan the AST for _entrypoints_.
 
 ```python
 def valid_signature(func_def: _ast.FunctionDef):
@@ -235,6 +237,7 @@ If none of the functions worked, a `NoValidCodeError` is thrown, and the loader 
 ## Trying it Out
 
 ### Setup
+
 By default the package does all it's work silently, but by setting the `logLevel` to `DEBUG` you can see what code it's trying to run.
 
 ```python
@@ -251,6 +254,7 @@ By default the package does all it's work silently, but by setting the `logLevel
 
 <details>
   <summary>QuickSort</summary>
+
 ```python
 >>> from stacksort import quicksort
 >>> sorted_list = quicksort(l)
@@ -291,9 +295,9 @@ DEBUG:RefactoringTool:Refactoring StackOverflow
 
 </details>
 
-
 <details>
   <summary>MergeSort</summary>
+
 ```
 >>> from stacksort import mergesort
 >>> sorted_list = mergesort(l)
@@ -327,6 +331,7 @@ DEBUG:RefactoringTool:Refactoring StackOverflow
 >>> print(sorted_list)
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
 ```
+
 </details>
 
 <details>
@@ -342,8 +347,8 @@ DEBUG:urllib3.connectionpool:https://api.stackexchange.com:443 "GET /2.2/questio
 DEBUG:stacksort._meta.injector:CODE BLOCK
 
 import operator
-def insertionSort(L, reverse=False):       
-    lt = operator.gt if reverse else operator.lt        
+def insertionSort(L, reverse=False):
+    lt = operator.gt if reverse else operator.lt
     for j in xrange(1,len(L)):
         valToInsert = L[j]
         i = j-1
@@ -359,6 +364,7 @@ DEBUG:RefactoringTool:Refactoring StackOverflow
 >>> print(sorted_list)
 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
 ```
+
 </details>
 
 <details>
@@ -405,6 +411,7 @@ DEBUG:RefactoringTool:Refactoring StackOverflow
 >>> print(sorted_list)
 (100, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99])
 ```
+
 </details>
 
 <details>
@@ -534,10 +541,10 @@ DEBUG:stacksort._meta.injector:CODE BLOCK
 import numpy as np
 cimport numpy as np
 cimport cython
-@cython.boundscheck(False) 
+@cython.boundscheck(False)
 @cython.wraparound(False)
 cpdef cython_bubblesort_numpy(long[:] np_ary):
-    """ 
+    """
     The Cython implementation of bubble sort with NumPy memoryview.
 
     """
@@ -653,7 +660,7 @@ extern "C" {
 DEBUG:stacksort._meta.injector:invalid syntax (<unknown>, line 3)
 DEBUG:stacksort._meta.injector:CODE BLOCK
 
-g++ -O3 -std=c++11 -march=native -DNDEBUG -shared -fPIC -I/tmp/boost_1_60_0 spreadsort.cpp -o spreadsort.so  
+g++ -O3 -std=c++11 -march=native -DNDEBUG -shared -fPIC -I/tmp/boost_1_60_0 spreadsort.cpp -o spreadsort.so
 
 
 
@@ -782,7 +789,7 @@ Counting-sort(A,B,k)
       C[i] = C[i] + C[i-1]
   for j = A.length down to 1
       B[C[A[j]]] = A[j]
-      C[A[j]] = C[A[j]] - 1 
+      C[A[j]] = C[A[j]] - 1
 
 
 
@@ -829,7 +836,7 @@ uint32_t u;
         for(j = 0; j < 4; j++){
             mIndex[j][(size_t)(u & 0xff)]++;
             u >>= 8;
-        }       
+        }
     }
     for(j = 0; j < 4; j++){             // convert to indices
         m = 0;
@@ -837,7 +844,7 @@ uint32_t u;
             n = mIndex[j][i];
             mIndex[j][i] = m;
             m += n;
-        }       
+        }
     }
     for(j = 0; j < 4; j++){             // radix sort
         for(i = 0; i < count; i++){     //  sort by current lsb
@@ -1202,14 +1209,14 @@ DEBUG:stacksort._meta.injector:CODE BLOCK
 > require(data.table)
 > DT = fread("test1e8.csv")
 > system.time(sort(DT$C1, method="radix"))
-   user  system elapsed 
-  6.238   0.585   6.832 
+   user  system elapsed
+  6.238   0.585   6.832
 > system.time(DT[order(C1)])
-   user  system elapsed 
-  4.275   0.457   4.738 
+   user  system elapsed
+  4.275   0.457   4.738
 > system.time(setkey(DT, C1))  # sort in-place
-   user  system elapsed 
-  3.020   0.577   3.600 
+   user  system elapsed
+  3.020   0.577   3.600
 
 
 
@@ -1227,4 +1234,5 @@ DEBUG:RefactoringTool:Refactoring StackOverflow
 >>> print(sorted_list)
 [99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
 ```
+
 </details>

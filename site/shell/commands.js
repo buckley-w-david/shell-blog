@@ -100,4 +100,4 @@ export const commands = {
   ls: ls,
   echo: echo,
   cat: cat,
-}
+};
