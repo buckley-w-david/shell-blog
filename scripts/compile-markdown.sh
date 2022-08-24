@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/usr/bin/env bash
 
 for file in $(find site -type f -name '*.md'); do
     name=${file#"site/"}

@@ -2,7 +2,11 @@
 
 all: dist/index.html
 
-dist/index.html: $(shell find site -type f)
+ready: pyproject.toml
+	poetry install
+	touch ready
+
+dist/index.html: $(shell find site -type f) ready
 	rm -rf dist/ build/
 	mkdir -p dist/blog
 	mkdir -p build/shell/
