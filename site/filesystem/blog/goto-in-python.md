@@ -75,7 +75,7 @@ Lets take our function from before (without the decorator), and use `dis.dis` to
  - \[4]: The _argument_ - If the instruction takes an argument, this is it.
  - \[5]: The _argval_ - This is a nice "preview" that `dis` generates for us that lets us know what the given argument value will translate to.
 
-What we're interested in is being able to contiguous regions of bytecode in our functions that look like lines 9 and 11, and replacing them with some kind of jump.
+What we're interested in is being able to find contiguous regions of bytecode in our functions that look like lines 9 and 11, and replacing them with some kind of jump.
 
 #### Scanning Bytecode
 
