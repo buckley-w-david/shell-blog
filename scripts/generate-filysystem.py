@@ -21,22 +21,19 @@ filesystem = {
 }
 
 
-# This is a little hacky, but I guess it works
-DATE_LINE = re.compile(r"Date: (.*)")
-def extract_date(path: str):
-    try:
-        with open(path, "r") as f:
-            line = f.readlines()[0]
-        match = DATE_LINE.match(line)
-        if match:
-            return datetime.strptime(match.group(1), "%Y-%m-%d")
-        else:
-            return datetime.min
-    except Exception:
-        return datetime.min
+import subprocess
+def origin(file):
+    result = subprocess.run(
+      ["git", "log", "--follow", "--format=%ad", "--date", "unix", file],
+      capture_output=True,
+    )
+    output = result.stdout.decode().strip()
+    if output:
+        return int(output.strip().split("\n")[-1])
+    else:
+        return float('inf')
 
-
-files = sorted(sys.stdin.read().strip().split("\n"), key=extract_date, reverse=True)
+files = sorted(sys.stdin.read().strip().split("\n"), key=origin, reverse=True)
 
 for file in files:
     tf = Path(file[15:])
