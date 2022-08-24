@@ -1,4 +1,4 @@
 <div id="corner">
-  <a id="escape" href="/escape.html">Home</a>
-  <a id="term" href="/index.html">Back to the Shell</a>
+  <a id="home" href="/home.html">Home</a>
+  <a id="term" href="/">Back to the Shell</a>
 </div>
