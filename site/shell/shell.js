@@ -1,5 +1,3 @@
-// TODO: probably should break this up into a few files
-
 import { fileSystem } from "./filesystem.js";
 import { absolute, parent, expand, tokenize } from "./utils.js";
 import { commands } from "./commands.js";
@@ -94,7 +92,6 @@ const exec = (command) => {
 };
 
 const validate = (text) => {
-  //: validate {{{
   const command = tokenize(text)[0];
   return (
     command === "" ||
@@ -102,40 +99,11 @@ const validate = (text) => {
     (command[0] !== "/" && fileSystem.executables.includes(abs(command))) ||
     fileSystem.executables.includes(command)
   );
-  //: }}}
 };
 
-// TODO autofocus entry
-entry.addEventListener("keydown", (event) => {
-  //: history {{{
-  if (event.keyCode == 38) {
-    if (historyCursor >= history.length) {
-      return;
-    }
-    historyCursor += 1;
-    entry.value = history[history.length - historyCursor];
-    return;
-  } else if (event.keyCode == 40) {
-    if (historyCursor == 0) {
-      return;
-    }
-    historyCursor -= 1;
-
-    if (historyCursor == 0) {
-      entry.value = "";
-    } else {
-      entry.value = history[history.length - historyCursor];
-    }
-    return;
-    //: }}}
-  } else if (event.keyCode !== 13) {
-    return;
-  }
-
-  //: exec {{{
+const runCommand = (command) => {
   historyCursor = 0;
   entry.className = "valid";
-  const command = entry.value;
   const ps1Clone = ps1.cloneNode(true);
   entry.value = "";
 
@@ -162,22 +130,47 @@ entry.addEventListener("keydown", (event) => {
 
     const resultPart = document.createElement("pre");
     let content = "";
-    if (result.stderr !== undefined) {
-      content += result.stderr + "\n";
-    }
+    if (result.stderr !== undefined) content += result.stderr + "\n";
+
     content += result.stdout;
     resultPart.innerHTML = content;
     item.appendChild(historyLine);
     item.appendChild(resultPart);
     output.appendChild(item);
   }
-  //: }}}
+};
+
+entry.addEventListener("keydown", (event) => {
+  if (event.keyCode == 38) {
+    if (historyCursor >= history.length) {
+      return;
+    }
+    historyCursor += 1;
+    entry.value = history[history.length - historyCursor];
+    return;
+  } else if (event.keyCode == 40) {
+    if (historyCursor == 0) {
+      return;
+    }
+    historyCursor -= 1;
+
+    if (historyCursor == 0) {
+      entry.value = "";
+    } else {
+      entry.value = history[history.length - historyCursor];
+    }
+    return;
+  } else if (event.keyCode !== 13) return;
+
+  runCommand(entry.value);
 });
 
 entry.addEventListener("keyup", (event) => {
-  if (validate(entry.value)) {
-    entry.className = "valid";
-  } else {
-    entry.className = "invalid";
-  }
+    if (validate(entry.value)) entry.className = "valid";
+    else entry.className = "invalid";
 });
+
+const params = new Proxy(new URLSearchParams(window.location.search), {
+  get: (searchParams, prop) => searchParams.get(prop),
+});
+if (params.bashrc) runCommand(params.bashrc);
