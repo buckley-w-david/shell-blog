@@ -1,4 +1,4 @@
-Date: 2020-06-19
+Date: 2020-06-18
 
 This is the first blog post... yay!
 
