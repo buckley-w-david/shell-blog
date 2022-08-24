@@ -28,7 +28,7 @@ The idea of `goto` is pretty simple: Add a "new" control flow mechanism allowing
 
 ### How?
 
-It's actually fairly simple just to manage it just using tools available in the standard library, the [`dis`](https://docs.python.org/3/library/dis.html) module being the key piece.
+It's actually fairly simple to manage it just using tools available in the standard library, the [`dis`](https://docs.python.org/3/library/dis.html) module being the key piece.
 
 Lets take our function from before (without the decorator), and use `dis.dis` to take a look at the bytecode.
 
