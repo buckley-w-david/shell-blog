@@ -123,7 +123,7 @@ Now that we have the location of all `goto`s and `label`s, generating the new by
             writer.write(bytes([i1.opcode, i1.arg or 0]))
 ```
 
-When we encounter a `goto`, we replace the original line with a `JUMP_ABSOLUTE` to the associated label. Otherwise we use the original instruction.
+When we encounter a `goto`, we replace the original instruction with a `JUMP_ABSOLUTE` to the associated label. Otherwise we use the original instruction.
 
 Then all that's left is to use it to construct a new function. We do so by using most of the original properties of the function we're decorating (only replacing the `co_code` attribute), and then initializing a `types.FunctionType` object.
 
