@@ -20,3 +20,7 @@ def unique(l):
         if item not in seen:
             seen.add(item)
             yield item
+
+def title(path):
+    return ' '.join(path.stem.split("-")).title()
+

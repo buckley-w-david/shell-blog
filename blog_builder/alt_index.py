@@ -23,4 +23,3 @@ def build():
         navigation.append((href, title))
 
     print(home.render(navigation=navigation))
-

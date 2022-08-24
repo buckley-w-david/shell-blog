@@ -2,7 +2,7 @@
 
 all: dist/index.html
 
-ready: pyproject.toml
+ready: pyproject.toml poetry.lock
 	poetry install
 	touch ready
 
@@ -10,8 +10,7 @@ dist/index.html: $(shell find site -type f) ready
 	rm -rf dist/ build/
 	mkdir -p dist/blog
 	mkdir -p build/shell/
-	# Compile blog posts into html docs
-	scripts/compile-markdown.sh
+	poetry run compile-markdown
 	# Build js
 	cp -r site/shell/ build/
 	poetry run build-filesystem > build/shell/filesystem.js
