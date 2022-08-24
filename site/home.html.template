@@ -21,8 +21,8 @@
   </style>
   <link rel="stylesheet" href="/blog.css" />
   <div id="corner">
-    <a id="escape" href="/escape.html">Home</a>
-    <a id="term" href="/index.html">Back to the Shell</a>
+    <a id="home" href="/home.html">Home</a>
+    <a id="term" href="/">Back to the Shell</a>
   </div>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
