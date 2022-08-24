@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "blog-builder"
+version = "0.1.0"
+description = ""
+authors = ["David Buckley <david@davidbuckley.ca>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Jinja2 = "^3.1.2"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+build-filesystem = "blog_builder.filesystem:build"
+build-alt-index = "blog_builder.alt_index:build"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
