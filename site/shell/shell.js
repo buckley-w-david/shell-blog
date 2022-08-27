@@ -70,10 +70,7 @@ const exec = (command) => {
       }
       break;
     default:
-      if (
-        command[0].substring(0, 2) == "./" &&
-        fileSystem.executables.includes(abs(command[0]))
-      ) {
+      if (fileSystem.executables.includes(abs(command[0]))) {
         const scriptTag = document.createElement("script");
         scriptTag.type = "text/javascript";
         scriptTag.src = abs(command[0]) + ".js";
