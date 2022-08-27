@@ -105,8 +105,7 @@ const validate = (text) => {
   return (
     command === "" ||
     builtins.includes(command) ||
-    (command[0] !== "/" && fileSystem.executables.includes(abs(command))) ||
-    fileSystem.executables.includes(command)
+    fileSystem.executables.includes(abs(command))
   );
 };
 
