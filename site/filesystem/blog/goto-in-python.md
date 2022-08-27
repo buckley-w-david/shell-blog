@@ -10,7 +10,7 @@ The idea of `goto` is pretty simple: Add a "new" control flow mechanism allowing
 
 ```python
 >>> import goto
->>> 
+>>>
 >>> @goto.goto
 ... def example():
 ...     '''
@@ -21,7 +21,7 @@ The idea of `goto` is pretty simple: Add a "new" control flow mechanism allowing
 ...     x = 2
 ...     example.label("skip")
 ...     return x
-... 
+...
 >>> example()
 1
 ```
@@ -34,7 +34,7 @@ Lets take our function from before (without the decorator), and use `dis.dis` to
 
 ```python
 >>> import dis
->>> 
+>>>
 >>> def example():
 ...     '''
 ...     returns 1
@@ -44,7 +44,7 @@ Lets take our function from before (without the decorator), and use `dis.dis` to
 ...     x = 2
 ...     example.label("skip")
 ...     return x
-... 
+...
 >>> dis.dis(example)
  [1]         [2]   [3]                  [4] [5]
   5           0 LOAD_CONST               1 (1)
@@ -69,11 +69,11 @@ Lets take our function from before (without the decorator), and use `dis.dis` to
              30 RETURN_VALUE
 ```
 
- - \[1]: The *line number* - This is used for generatating stacktraces that actually link back to lines of python code.
- - \[2]: The _byte offset_ - All bytecode instructions have been strictly 2 bytes for a while now, so this increments by 2 every instruction.
- - \[3]: The _opcode_ - What instruction is actually going to run.
- - \[4]: The _argument_ - If the instruction takes an argument, this is it.
- - \[5]: The _argval_ - This is a nice "preview" that `dis` generates for us that lets us know what the given argument value will translate to.
+- \[1]: The _line number_ - This is used for generatating stacktraces that actually link back to lines of python code.
+- \[2]: The _byte offset_ - All bytecode instructions have been strictly 2 bytes for a while now, so this increments by 2 every instruction.
+- \[3]: The _opcode_ - What instruction is actually going to run.
+- \[4]: The _argument_ - If the instruction takes an argument, this is it.
+- \[5]: The _argval_ - This is a nice "preview" that `dis` generates for us that lets us know what the given argument value will translate to.
 
 What we're interested in is being able to find contiguous regions of bytecode in our functions that look like lines 6 and 8, and replacing them with some kind of jump.
 
@@ -144,13 +144,13 @@ We fall prey to what seems to be an optimization that CPython makes where anythi
 
 ```python
 >>> import dis
->>> 
+>>>
 >>> def f():
 ...     f.goto("after")
 ...     return 5
 ...     f.label("after")
 ...     return 6
-... 
+...
 >>> dis.dis(f)
   2           0 LOAD_GLOBAL              0 (f)
               2 LOAD_METHOD              1 (goto)
@@ -170,13 +170,13 @@ Additionally, there are no saftey nets here, it's very easy to cause things to g
 
 ```python
 >>> import goto
->>> 
+>>>
 >>> @goto.goto
 ... def f():
 ...     f.goto("in-loop")
 ...     for i in range(5):
 ...         f.label("in-loop") # Jumping into a loop like this will case a segfault
-... 
+...
 >>> f()
 fish: Job 1, 'python' terminated by signal SIGSEGV (Address boundary error)
 ```
@@ -185,7 +185,7 @@ But if you're careful, you can do some silly stuff.
 
 ```python
 >>> import goto
->>> 
+>>>
 >>> @goto.goto
 ... def f():
 ...     for i in range(4):
@@ -196,7 +196,7 @@ But if you're careful, you can do some silly stuff.
 ...         print("b", i)
 ...         f.goto("loop-a")
 ...         f.label("loop-b")
-... 
+...
 >>> f()
 a 0
 b 1

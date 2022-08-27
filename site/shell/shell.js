@@ -74,22 +74,22 @@ const exec = (command) => {
         command[0].substring(0, 2) == "./" &&
         fileSystem.executables.includes(abs(command[0]))
       ) {
-        const scriptTag = document.createElement('script');
-        scriptTag.type = 'text/javascript';
+        const scriptTag = document.createElement("script");
+        scriptTag.type = "text/javascript";
         scriptTag.src = abs(command[0]) + ".js";
-        scriptTag.id = "inject"
+        scriptTag.id = "inject";
         const remove = (event) => {
-            if (event.data == "executables-close") {
-                scriptTag.remove();
-                canvas.className = "inactive";
-                shell.className = "active";
-                const context = canvas.getContext('2d');
-                context.clearRect(0, 0, canvas.width, canvas.height);
-                window.removeEventListener("message", remove);
-            }
+          if (event.data == "executables-close") {
+            scriptTag.remove();
+            canvas.className = "inactive";
+            shell.className = "active";
+            const context = canvas.getContext("2d");
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            window.removeEventListener("message", remove);
+          }
         };
         window.addEventListener("message", remove);
-        document.body.appendChild(scriptTag)
+        document.body.appendChild(scriptTag);
       } else {
         stderr = `Unknown command: ${command[0]}`;
         status = 127;
@@ -178,8 +178,8 @@ entry.addEventListener("keydown", (event) => {
 });
 
 entry.addEventListener("keyup", (event) => {
-    if (validate(entry.value)) entry.className = "valid";
-    else entry.className = "invalid";
+  if (validate(entry.value)) entry.className = "valid";
+  else entry.className = "invalid";
 });
 
 const params = new Proxy(new URLSearchParams(window.location.search), {
