@@ -114,7 +114,7 @@
   let done = false;
 
   // Background Speed Factor
-  const bgSpeed = 0.15;
+  const bgSpeed = 0.06;
   // Foreground Speed Factor
   const fgSpeed = 0.1;
 
