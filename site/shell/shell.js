@@ -3,6 +3,7 @@ import { absolute, parent, expand, tokenize } from "./utils.js";
 import { commands } from "./commands.js";
 
 const shell = document.getElementById("shell");
+const canvas = document.getElementById("display");
 const entry = document.getElementById("entry");
 const output = document.getElementById("history");
 
@@ -43,7 +44,6 @@ const exec = (command) => {
     case "":
       break;
     case "cd":
-      //: cd {{{
       if (argv.length !== 1) stderr = "Too many args for cd command";
       else if (argv[0] == "..") {
         let target = parent(currentDirectory);
@@ -68,16 +68,28 @@ const exec = (command) => {
           status = 1;
         }
       }
-      //#: }}}
       break;
     default:
-      //: script execution {{{
       if (
         command[0].substring(0, 2) == "./" &&
         fileSystem.executables.includes(abs(command[0]))
       ) {
-        // TODO local scripts
-        //#: }}}
+        const scriptTag = document.createElement('script');
+        scriptTag.type = 'text/javascript';
+        scriptTag.src = abs(command[0]) + ".js";
+        scriptTag.id = "inject"
+        const remove = (event) => {
+            if (event.data == "executables-close") {
+                scriptTag.remove();
+                canvas.className = "inactive";
+                shell.className = "active";
+                const context = canvas.getContext('2d');
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                window.removeEventListener("message", remove);
+            }
+        };
+        window.addEventListener("message", remove);
+        document.body.appendChild(scriptTag)
       } else {
         stderr = `Unknown command: ${command[0]}`;
         status = 127;

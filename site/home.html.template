@@ -20,15 +20,12 @@
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <link rel="stylesheet" href="/blog.css" />
+</head>
+<body>
   <div id="corner">
     <a id="home" href="/home.html">Home</a>
     <a id="term" href="/">Back to the Shell</a>
   </div>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
-</head>
-<body>
   <p>Yeah, the shell-as-a-blog thing is a bit much, I don’t blame you for
   not wanting to bother with it.</p>
   <p>You can find versions of all the “files” in the terminal here:</p>

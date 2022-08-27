@@ -64,6 +64,10 @@ pre {
   color: var(--alt-text-color);
 }
 
+.inactive {
+    display: none;
+}
+
 #entry {
   border: none;
   resize: none;

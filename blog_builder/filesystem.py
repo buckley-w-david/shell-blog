@@ -23,11 +23,15 @@ def build():
     acc = lambda *args: Path("/", *args)
     for file in files:
         local_path = Path("/", *file.parts[2:])
+        if local_path.suffix == '.js':
+            local_path = local_path.with_suffix("")
+            filesystem["executables"].append(str(local_path))
 
         # Create directory listings
         parts = [Path(p) for p in accumulate(local_path.parts[1:-1], acc, initial="") if p]
         for part in parts:
             filesystem["dirs"][str(part.parent)].append(part.name + "/")
+
         filesystem["dirs"][str(local_path.parent)].append(local_path.name)
 
         # Extract file contents

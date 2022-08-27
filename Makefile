@@ -9,6 +9,7 @@ ready: pyproject.toml poetry.lock
 dist/index.html: $(shell find site -type f) ready
 	rm -rf dist/ build/
 	mkdir -p dist/blog
+	mkdir -p dist/toys
 	mkdir -p build/shell/
 	poetry run compile-markdown
 	# Build js
@@ -17,7 +18,10 @@ dist/index.html: $(shell find site -type f) ready
 	esbuild build/shell/shell.js --bundle --minify --outfile=dist/shell/shell.js
 	# Copy static assets
 	cp -r site/filesystem/blog/assets dist/blog/
+	cp -r site/filesystem/toys/*.js site/filesystem/toys/*.png dist/toys/
 	cp -r site/*.css site/*.html site/ttf site/woff2 dist/
+	# Generate toy html pages
+	poetry run build-toys
 	# Generate alt index (with dynamic list of pages)
 	poetry run build-alt-index > dist/home.html
 

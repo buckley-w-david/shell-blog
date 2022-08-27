@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>{{title}}</title>
+  <script type="module" src="{{toy}}"></script>
+  <link rel="stylesheet" href="/toy.css" />
+</head>
+<body>
+  <div id="corner">
+    <a id="home" href="/home.html">Home</a>
+    <a id="term" href="/">Back to the Shell</a>
+  </div>
+  <h1>{{title}}</h1>
+  <canvas id="display"></canvas>
+  <img id="sprite-sheet" src="{{sprites}}" style="display: none">
+</body>
+</html>
