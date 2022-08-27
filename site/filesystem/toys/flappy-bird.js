@@ -125,7 +125,7 @@
   const cw = 228;
   const ch = 512;
   canvas.className = "active";
-  shell.className = "inactive";
+  if (shell) shell.className = "inactive";
   canvas.width = cw;
   canvas.height = ch;
 
@@ -262,7 +262,7 @@
 
   const exit = () => {
     canvas.className = "inactive";
-    shell.className = "active";
+    if (shell) shell.className = "active";
     sprites.remove();
     document.removeEventListener("click", flap);
     window.postMessage("executables-close");
