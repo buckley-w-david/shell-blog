@@ -1,5 +1,5 @@
 (async () => {
-  const spriteLocations = {
+  const spriteSheet = {
     0: { x: 0, y: 0, width: 24, height: 36 },
     1: { x: 24, y: 0, width: 16, height: 36 },
     2: { x: 40, y: 0, width: 24, height: 36 },
@@ -11,28 +11,28 @@
     8: { x: 184, y: 0, width: 24, height: 36 },
     9: { x: 208, y: 0, width: 24, height: 36 },
 
-    "Game Over": { x: 0, y: 36, width: 192, height: 42 },
-    Message: { x: 0, y: 78, width: 184, height: 267 },
+    GameOver: { x: 0, y: 36, width: 192, height: 42 },
+    Splash: { x: 0, y: 78, width: 184, height: 267 },
 
-    "Green Pipe": { x: 232, y: 0, width: 52, height: 320 },
-    "Red Pipe": { x: 284, y: 0, width: 52, height: 320 },
+    GreenPipe: { x: 232, y: 0, width: 52, height: 320 },
+    RedPipe: { x: 284, y: 0, width: 52, height: 320 },
 
-    "BG Day": { x: 0, y: 345, width: 288, height: 512 },
-    "BG Night": { x: 288, y: 345, width: 288, height: 512 },
+    BackgroundDay: { x: 0, y: 345, width: 288, height: 512 },
+    BackgroundNight: { x: 288, y: 345, width: 288, height: 512 },
 
-    "BB Downflap": { x: 198, y: 36, width: 34, height: 24 },
-    "BB Midflap": { x: 198, y: 60, width: 34, height: 24 },
-    "BB Upflap": { x: 198, y: 84, width: 34, height: 24 },
+    BlueBirdDown: { x: 198, y: 36, width: 34, height: 24 },
+    BlueBirdMid: { x: 198, y: 60, width: 34, height: 24 },
+    BlueBirdUp: { x: 198, y: 84, width: 34, height: 24 },
 
-    "RB Downflap": { x: 198, y: 108, width: 34, height: 24 },
-    "RB Midflap": { x: 198, y: 132, width: 34, height: 24 },
-    "RB Upflap": { x: 198, y: 156, width: 34, height: 24 },
+    RedBirdDown: { x: 198, y: 108, width: 34, height: 24 },
+    RedBirdMid: { x: 198, y: 132, width: 34, height: 24 },
+    RedBirdUp: { x: 198, y: 156, width: 34, height: 24 },
 
-    "YB Downflap": { x: 198, y: 180, width: 34, height: 24 },
-    "YB Midflap": { x: 198, y: 204, width: 34, height: 24 },
-    "YB Upflap": { x: 198, y: 228, width: 34, height: 24 },
+    YellowBirdDown: { x: 198, y: 180, width: 34, height: 24 },
+    YellowBirdMid: { x: 198, y: 204, width: 34, height: 24 },
+    YellowBirdUp: { x: 198, y: 228, width: 34, height: 24 },
 
-    Base: { x: 0, y: 856, width: 336, height: 112 },
+    Base: { x: 0, y: 857, width: 336, height: 112 },
   };
   const canvas = document.getElementById("display");
   const ctx = canvas.getContext("2d");
@@ -46,18 +46,18 @@
   const flapCycle = [
     ...Array(flapUp)
       .fill()
-      .map((_) => "BB Upflap"),
+      .map((_) => spriteSheet.BlueBirdUp),
     ...Array(flapDown)
       .fill()
-      .map((_) => "BB Midflap"),
+      .map((_) => spriteSheet.BlueBirdMid),
     ...Array(flapMid)
       .fill()
-      .map((_) => "BB Downflap"),
+      .map((_) => spriteSheet.BlueBirdDown),
   ];
 
   const draw = (sprite, dx, dy, rot) => {
     if (rot === undefined) rot = 0;
-    const { x, y, width, height } = spriteLocations[sprite];
+    const { x, y, width, height } = sprite;
 
     ctx.translate(dx + width / 2, dy + height / 2);
     ctx.rotate((rot * Math.PI) / 180);
@@ -77,6 +77,23 @@
     ctx.rotate((-rot * Math.PI) / 180);
     ctx.translate(-dx - width / 2, -dy - height / 2);
   };
+
+  const drawCentered = (sprite) => {
+    draw(sprite, (cw - sprite.width) / 2, (ch - sprite.height) / 2);
+  }
+
+  const kern = 2;
+  const drawScore = (n) => {
+    const digits = String(n).split("");
+    const totalWidth = digits.reduce((acc, val, i) => acc + spriteSheet[val].width + kern, 0);
+    let x = (cw - totalWidth) / 2;
+    let y = ch / 6;
+    digits.forEach((digit) => {
+      const sprite = spriteSheet[digit];
+      draw(sprite, x, y);
+      x += sprite.width;
+    });
+  }
 
   const ready = new Promise((resolve, reject) => {
     if (sprites.complete) resolve();
@@ -110,7 +127,9 @@
   let start,
     previous,
     frameIdx = 0,
-    bgPosition = 0;
+    bgPosition = 0,
+    fgPosition = 0;
+    score = 0;
   let done = false;
 
   // Background Speed Factor
@@ -122,6 +141,13 @@
   const flapAcceleration = -1;
   const terminalVelocity = 7.0;
 
+  const pipeWidth = spriteSheet.GreenPipe.width;
+  const pipeHeight = spriteSheet.GreenPipe.height;
+  const birdWidth = spriteSheet.BlueBirdUp.width;
+  const birdHeight = spriteSheet.BlueBirdUp.height;
+  const baseHeight = spriteSheet.Base.height;
+  const baseWidth = spriteSheet.Base.width;
+
   const cw = 228;
   const ch = 512;
   canvas.className = "active";
@@ -130,25 +156,25 @@
   canvas.height = ch;
 
   const newPipeHeight = () => {
-    return randRange(ch - 320, ch - 150);
+    return randRange(ch - pipeHeight, ch - 150);
   };
 
   const horizontalPipeGap = 250;
   const verticalPipeGap = 100;
-  let bird = [cw / 3, ch / 3];
+  let bird = { x: cw / 3, y: ch / 3 };
   let acceleration = 0;
   let velocity = flapAcceleration;
   let flapping = false;
 
-  let p1 = [cw * 2, newPipeHeight()];
-  let p2 = [cw * 2 + horizontalPipeGap, newPipeHeight()];
+  let p1 = { x: cw * 2, y: newPipeHeight() };
+  let p2 = { x: cw * 2 + horizontalPipeGap, y: newPipeHeight() };
+
 
   const flap = (event) => {
     flapping = true;
   };
   document.addEventListener("click", flap);
 
-  // FIXME: Remove magic numbers from logic
   const tick = (td) => {
     const bgMovement = td * bgSpeed;
     const fgMovement = td * fgSpeed;
@@ -166,64 +192,71 @@
     );
 
     bgPosition = (bgPosition - bgMovement) % cw;
-    // bird[0] = bird[0] - fgMovement;
-    bird[1] = bird[1] + velocity;
+    fgPosition = (fgPosition - fgMovement) % baseWidth;
+    bird.y += velocity;
 
-    if (bird[1] > ch) bird[1] = 0;
-    else if (bird[1] < 0) bird[1] = ch;
+    if (bird.y > ch) bird.y = 0;
+    else if (bird.y < 0) bird.y = ch;
 
-    p1[0] = p1[0] - fgMovement;
-    p2[0] = p2[0] - fgMovement;
-    // 52 == pipe width
-    if (p1[0] < -52) {
-      p1[0] = p2[0] + horizontalPipeGap;
-      p1[1] = newPipeHeight();
+
+    let p1CanScore = p1.x > bird.x, 
+        p2CanScore = p2.x > bird.x;
+
+    p1.x -= fgMovement;
+    p2.x -= fgMovement;
+    if (p1.x < -pipeWidth) {
+      p1.x = p2.x + horizontalPipeGap;
+      p1.y = newPipeHeight();
     }
 
-    if (p2[0] < -52) {
-      p2[0] = p1[0] + horizontalPipeGap;
-      p2[1] = newPipeHeight();
+    if (p2.x < -pipeWidth) {
+      p2.x = p1.x + horizontalPipeGap;
+      p2.y = newPipeHeight();
     }
+
+    if ((p1.x < bird.x && p1CanScore) || (p2.x < bird.x && p2CanScore)) score += 1;
+
     flapping = false;
   };
 
   const render = () => {
-    draw("BG Day", bgPosition, 0);
-    draw("BG Day", cw + bgPosition, 0);
+    draw(spriteSheet.BackgroundDay, bgPosition, 0);
+    draw(spriteSheet.BackgroundDay, cw + bgPosition, 0);
 
-    draw(flapCycle[frameIdx % flapCycle.length], ...bird);
-    draw("Green Pipe", ...p1);
-    draw("Green Pipe", p1[0], p1[1] - 320 - verticalPipeGap, 180);
-    draw("Green Pipe", ...p2);
-    draw("Green Pipe", p2[0], p2[1] - 320 - verticalPipeGap, 180);
+    draw(flapCycle[frameIdx % flapCycle.length], bird.x, bird.y);
+    draw(spriteSheet.GreenPipe, p1.x, p1.y);
+    draw(spriteSheet.GreenPipe, p1.x, p1.y - pipeHeight - verticalPipeGap, 180);
+    draw(spriteSheet.GreenPipe, p2.x, p2.y);
+    draw(spriteSheet.GreenPipe, p2.x, p2.y - pipeHeight - verticalPipeGap, 180);
 
-    draw("Base", 0, 400);
+    draw(spriteSheet.Base, fgPosition, ch - baseHeight);
+    draw(spriteSheet.Base, baseWidth + fgPosition - 1, ch - baseHeight);
+    drawScore(score);
   };
 
   const checkCollisions = () => {
-    if (bird[1] > ch - 112 - 24 || bird[1] < 0) return true;
+    if (bird.y > ch - baseHeight - birdHeight || bird.y < 0) return true;
 
-    const birdRect = { x: bird[0], y: bird[1], w: 32, h: 24 };
+    const birdRect = { ...spriteSheet.BlueBirdUp, ...bird };
     for (let p of [p1, p2]) {
-      const topRect = { x: p[0], y: p[1], w: 52, h: 320 };
+      const topRect = { ...spriteSheet.GreenPipe, ...p };
       const bottomRect = {
-        x: p[0],
-        y: p[1] - 320 - verticalPipeGap,
-        w: 52,
-        h: 320,
+        ...spriteSheet.GreenPipe,
+        x: p.x,
+        y: p.y - pipeHeight - verticalPipeGap,
       };
       if (
-        birdRect.x < topRect.x + topRect.w &&
-        birdRect.x + birdRect.w > topRect.x &&
-        birdRect.y < topRect.y + topRect.h &&
-        birdRect.h + birdRect.y > topRect.y
+        birdRect.x < topRect.x + topRect.width &&
+        birdRect.x + birdRect.width > topRect.x &&
+        birdRect.y < topRect.y + topRect.height &&
+        birdRect.height + birdRect.y > topRect.y
       )
         return true;
       else if (
-        birdRect.x < bottomRect.x + bottomRect.w &&
-        birdRect.x + birdRect.w > bottomRect.x &&
-        birdRect.y < bottomRect.y + bottomRect.h &&
-        birdRect.h + birdRect.y > bottomRect.y
+        birdRect.x < bottomRect.x + bottomRect.width &&
+        birdRect.x + birdRect.width > bottomRect.x &&
+        birdRect.y < bottomRect.y + bottomRect.height &&
+        birdRect.height + birdRect.y > bottomRect.y
       )
         return true;
     }
@@ -233,8 +266,7 @@
   const main = async () => {
     await ready;
     render();
-    ctx.font = "16px serif";
-    ctx.fillText("Click to start!", cw / 2 - 45, ch / 2);
+    drawCentered(spriteSheet.Splash);
     await interacted;
 
     await new Promise((resolve, reject) => {
@@ -258,6 +290,11 @@
       };
       window.requestAnimationFrame(frame);
     });
+
+    drawCentered(spriteSheet.GameOver);
+    await new Promise((resolve, reject) => {
+      setTimeout(resolve, 1000);
+    })
   };
 
   const exit = () => {
