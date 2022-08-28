@@ -98,28 +98,6 @@
     });
   };
 
-  const ready = new Promise((resolve, reject) => {
-    if (sprites.complete) resolve();
-    else {
-      sprites.addEventListener("load", (e) => {
-        resolve();
-      });
-      sprites.addEventListener("error", (e) => {
-        reject();
-      });
-    }
-  });
-
-  const interacted = new Promise((resolve, reject) => {
-    document.addEventListener(
-      "click",
-      (e) => {
-        resolve();
-      },
-      { once: true }
-    );
-  });
-
   const randRange = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -180,11 +158,10 @@
   const tick = (td) => {
     const bgMovement = td * bgSpeed;
     const fgMovement = td * fgSpeed;
-    let ua,
+    let ua = 0,
       da = td * gravityAcceleration;
 
     if (flapping) ua = td * flapAcceleration;
-    else ua = 0;
 
     acceleration = da + ua;
     velocity = clamp(
@@ -266,10 +243,30 @@
   };
 
   const main = async () => {
-    await ready;
+    await new Promise((resolve, reject) => {
+      if (sprites.complete) resolve();
+      else {
+        sprites.addEventListener("load", (e) => {
+          resolve();
+        });
+        sprites.addEventListener("error", (e) => {
+          reject();
+        });
+      }
+    });
+
     render();
     drawCentered(spriteSheet.Splash);
-    await interacted;
+
+    await new Promise((resolve, reject) => {
+      document.addEventListener(
+        "click",
+        (e) => {
+          resolve();
+        },
+        { once: true }
+      );
+    });
 
     await new Promise((resolve, reject) => {
       const frame = (ts) => {
