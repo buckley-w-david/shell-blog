@@ -47,10 +47,10 @@
     ...Array(flapUp)
       .fill()
       .map((_) => spriteSheet.BlueBirdUp),
-    ...Array(flapDown)
+    ...Array(flapMid)
       .fill()
       .map((_) => spriteSheet.BlueBirdMid),
-    ...Array(flapMid)
+    ...Array(flapDown)
       .fill()
       .map((_) => spriteSheet.BlueBirdDown),
   ];
