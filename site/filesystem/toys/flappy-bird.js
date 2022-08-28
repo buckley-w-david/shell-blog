@@ -174,8 +174,8 @@
     fgPosition = (fgPosition - fgMovement) % baseWidth;
     bird.y += velocity;
 
-    if (bird.y > ch) bird.y = 0;
-    else if (bird.y < 0) bird.y = ch;
+    if (bird.y > ch) bird.y = ch;
+    else if (bird.y < 0) bird.y = 0;
 
     let p1CanScore = p1.x > bird.x,
       p2CanScore = p2.x > bird.x;
@@ -214,7 +214,7 @@
   };
 
   const checkCollisions = () => {
-    if (bird.y > ch - baseHeight - birdHeight || bird.y < 0) return true;
+    if (bird.y >= ch - baseHeight - birdHeight || bird.y <= 0) return true;
 
     const birdRect = { ...spriteSheet.BlueBirdUp, ...bird };
     for (let p of [p1, p2]) {
