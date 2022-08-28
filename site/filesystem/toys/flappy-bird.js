@@ -80,12 +80,15 @@
 
   const drawCentered = (sprite) => {
     draw(sprite, (cw - sprite.width) / 2, (ch - sprite.height) / 2);
-  }
+  };
 
   const kern = 2;
   const drawScore = (n) => {
     const digits = String(n).split("");
-    const totalWidth = digits.reduce((acc, val, i) => acc + spriteSheet[val].width + kern, 0);
+    const totalWidth = digits.reduce(
+      (acc, val, i) => acc + spriteSheet[val].width + kern,
+      0
+    );
     let x = (cw - totalWidth) / 2;
     let y = ch / 6;
     digits.forEach((digit) => {
@@ -93,7 +96,7 @@
       draw(sprite, x, y);
       x += sprite.width;
     });
-  }
+  };
 
   const ready = new Promise((resolve, reject) => {
     if (sprites.complete) resolve();
@@ -128,7 +131,7 @@
     previous,
     frameIdx = 0,
     bgPosition = 0,
-    fgPosition = 0;
+    fgPosition = 0,
     score = 0;
   let done = false;
 
@@ -169,7 +172,6 @@
   let p1 = { x: cw * 2, y: newPipeHeight() };
   let p2 = { x: cw * 2 + horizontalPipeGap, y: newPipeHeight() };
 
-
   const flap = (event) => {
     flapping = true;
   };
@@ -198,9 +200,8 @@
     if (bird.y > ch) bird.y = 0;
     else if (bird.y < 0) bird.y = ch;
 
-
-    let p1CanScore = p1.x > bird.x, 
-        p2CanScore = p2.x > bird.x;
+    let p1CanScore = p1.x > bird.x,
+      p2CanScore = p2.x > bird.x;
 
     p1.x -= fgMovement;
     p2.x -= fgMovement;
@@ -214,7 +215,8 @@
       p2.y = newPipeHeight();
     }
 
-    if ((p1.x < bird.x && p1CanScore) || (p2.x < bird.x && p2CanScore)) score += 1;
+    if ((p1.x < bird.x && p1CanScore) || (p2.x < bird.x && p2CanScore))
+      score += 1;
 
     flapping = false;
   };
@@ -294,7 +296,7 @@
     drawCentered(spriteSheet.GameOver);
     await new Promise((resolve, reject) => {
       setTimeout(resolve, 1000);
-    })
+    });
   };
 
   const exit = () => {
