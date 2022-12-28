@@ -1,4 +1,4 @@
-.PHONY: all server
+.PHONY: all server watch
 
 all: dist/index.html
 
@@ -24,6 +24,9 @@ dist/index.html: $(shell find site -type f) ready
 	poetry run build-toys
 	# Generate alt index (with dynamic list of pages)
 	poetry run build-alt-index > dist/home.html
+
+watch:
+	find . -type f | entr make
 
 server: dist/index.html
 	cd dist/; python -m http.server 8000
