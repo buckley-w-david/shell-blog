@@ -26,7 +26,7 @@ AdSpy CIO
 
 ## Wed, 21 Oct 2020
 
-From: Viky Jude <viky@invoke.business>  
+From: Viky Jude \<viky@invoke.business\>  
 Subject: Earn Revenue with Bing/Yahoo Feeds  
 
 <pre>
