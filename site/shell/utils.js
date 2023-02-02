@@ -41,9 +41,16 @@ export const tokenize = (currentDirectory, text) => {
       let dir = parent(ref); // FIXME: Handle more than one level of globbing
       const re = new RegExp("^" + t.replaceAll("*", ".*") + "/?$");
 
+      let files = [];
+
       for (let d of fileSystem.dirs[dir]) {
-        if (re.test(d)) tokens.push(d);
+        if (re.test(d)) {
+          files.push(d);
+        }
       }
+
+      if (files.length === 0) tokens.push(buffer)
+      else tokens.push(...files)
     } else {
       tokens.push(t);
     }
