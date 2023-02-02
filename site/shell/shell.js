@@ -1,5 +1,5 @@
 import { fileSystem } from "./filesystem.js";
-import { absolute, parent, expand, tokenize } from "./utils.js";
+import { absolute, parent, tokenize } from "./utils.js";
 import { commands } from "./commands.js";
 
 const shell = document.getElementById("shell");
@@ -101,7 +101,7 @@ const exec = (command) => {
 };
 
 const validate = (text) => {
-  const command = tokenize(text)[0];
+  const command = tokenize(currentDirectory, text)[0];
   return (
     command === "" ||
     builtins.includes(command) ||
@@ -115,7 +115,7 @@ const runCommand = (command) => {
   const ps1Clone = ps1.cloneNode(true);
   entry.value = "";
 
-  const tokens = tokenize(expand(command));
+  const tokens = tokenize(currentDirectory, command);
 
   history.push(command);
   if (tokens[0] == "clear") {

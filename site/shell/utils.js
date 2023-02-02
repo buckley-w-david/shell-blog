@@ -1,3 +1,5 @@
+import { fileSystem } from "./filesystem.js";
+
 export const absolute = (currentDirectory, path) => {
   if (path[0] !== "/") {
     if (currentDirectory === "/") path = `/${path}`;
@@ -26,13 +28,47 @@ export const parent = (path) => {
   else return dirParts.join("/");
 };
 
-export const expand = (text) => {
+export const tokenize = (currentDirectory, text) => {
   // TODO apply globbing
   // TODO apply variable expansion
-  return text;
-};
-
-export const tokenize = (text) => {
   // TODO properly split command into tokens (quote handling)
-  return text.trim().split(" ");
+
+  let tokens = [];
+  let buffer = "";
+  let glob = false;
+
+  const push = (t) => {
+    if (glob) {
+      let ref = absolute(currentDirectory, t);
+      let dir = parent(ref); // FIXME: Handle more than one level of globbing
+      const re = new RegExp("^" + t.replaceAll("*", ".*") + "/?$");
+
+      for (let d of fileSystem.dirs[dir]) {
+        if (re.test(d)) tokens.push(d);
+      }
+    } else {
+      tokens.push(t);
+    }
+  }
+
+  for (let i = 0; i < text.length; i++) {
+    let c = text[i];
+
+    if (c === ' ') {
+      push(buffer);
+      buffer = '';
+      glob = false;
+    } else if (c === '"' ) {
+        i++;
+        while( i < text.length && text[i] !== '"' ) { buffer += text[i++]; }
+    } else {
+      glob ||= (c === "*");
+      buffer += c; 
+    }
+  }
+  if (buffer || tokens.length == 0) push(buffer);
+
+  console.log("tokens", tokens);
+
+  return tokens;
 };
