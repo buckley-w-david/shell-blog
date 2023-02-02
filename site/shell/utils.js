@@ -66,7 +66,5 @@ export const tokenize = (currentDirectory, text) => {
   }
   if (buffer || tokens.length == 0) push(buffer);
 
-  console.log("tokens", tokens);
-
   return tokens;
 };
