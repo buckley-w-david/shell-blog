@@ -9,6 +9,7 @@ ls [FILE]... - list directory contents.
 cat [FILE]... - concatenate files and print on the standard output. Supports Images.
 open [FILE] - open up a given resource in a new tab.
 echo [STRING]... - display a line of text.
+tree [FILE] - list contents of directories in a tree-like format.
 cd dirName - change working directory.
 help - you're looking at it.
 clear - clear the terminal screen\
@@ -122,10 +123,49 @@ const open = (argc, argv, env) => {
 
 const echo = (argc, argv, env) => success(argv.join(" "));
 
+const _tree = (root, prefix) => {
+  let contents = [];
+  let nodes = fileSystem.dirs[root];
+
+  for (let [i, node] of nodes.entries()) {
+    if (i === nodes.length - 1) {
+      contents.push(prefix + "└── " + node);
+    } else {
+      contents.push(prefix + "├── " + node);
+    }
+    if (node.endsWith("/")) {
+      let dir;
+      let name = node.substring(0, node.length - 1);
+      if (root === "/") {
+        dir = root + name;
+      } else {
+        dir = root + "/" + name;
+      }
+      contents = contents.concat(_tree(dir, prefix + "│   "));
+    }
+  }
+  return contents;
+}
+
+const tree = (argc, argv, env) => {
+  let root, vroot;
+  if (argc == 0) {
+    root = env.currentDirectory;
+    vroot = "."
+  } else {
+    root = absolute(env.currentDirectory, argv[0]);
+    vroot = argv[0]
+  }
+  let contents = [vroot].concat(_tree(root, ""));
+  let stdout = contents.join("\n")
+  return response(stdout, undefined, 0);
+}
+
 export const commands = {
   help: help,
   ls: ls,
   echo: echo,
   cat: cat,
   open: open,
+  tree: tree,
 };
