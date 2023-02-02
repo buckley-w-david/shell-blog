@@ -29,9 +29,7 @@ export const parent = (path) => {
 };
 
 export const tokenize = (currentDirectory, text) => {
-  // TODO apply globbing
   // TODO apply variable expansion
-  // TODO properly split command into tokens (quote handling)
 
   let tokens = [];
   let buffer = "";
