@@ -46,7 +46,7 @@ export const tokenize = text => {
       const stem = t.substring(0, dirPoint + 1);
       const leaf = t.substring(dirPoint + 1, t.length);
 
-      const re = new RegExp("^" + leaf.replaceAll("*", ".*") + "/?$");
+      const re = new RegExp("^" + leaf.replaceAll("*", ".*").replaceAll("?", ".") + "/?$");
 
       let files = [];
 
@@ -75,7 +75,7 @@ export const tokenize = text => {
         i++;
         while( i < text.length && text[i] !== '"' ) { buffer += text[i++]; }
     } else {
-      glob ||= (c === "*");
+      glob ||= (c === "*" || c === "?");
       buffer += c; 
     }
   }
