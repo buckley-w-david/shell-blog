@@ -40,16 +40,6 @@ const ls = (argc, argv) => {
   for (let target of targets) {
     let path = absolute(target);
 
-    // // Remove "/" characters at the end of directories
-    // // It's a bit of a hack, but meh
-    // if (
-    //   path !== "/" &&
-    //   path.slice(-1) === "/" &&
-    //   Object.keys(fileSystem.dirs).includes(path.slice(0, -1))
-    // ) {
-    //   path = path.replace(/\/$/, "");
-    // }
-
     if (Object.keys(fileSystem.dirs).includes(path)) {
       if (matches[path] === undefined) {
         matches[path] = [...fileSystem.dirs[path]];

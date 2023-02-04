@@ -110,9 +110,6 @@ const validate = (text) => {
 };
 
 const completeCommand = (backwards) => {
-  // FIXME: Allow tab completion to work correctly with directory traversal
-  // For example ls blog/a<Tab> should complete to the contents of blog/ that start with a
-  // This is partially implemented below but needs some work
   const emptyTab = entry.value.endsWith(" ");
   const tokens = tokenize(entry.value);
 
