@@ -2,10 +2,8 @@ import { fileSystem } from "./filesystem.js";
 import { env } from "./env.js";
 
 export const absolute = (path) => {
-  if (path[0] !== "/") {
-    if (env.currentDirectory === "/") path = `/${path}`;
-    else path = `${env.currentDirectory}/${path}`;
-  }
+  if (path[0] !== "/") path = join(env.currentDirectory, path)
+
   if (path.slice(-1) === "/" && path !== "/") {
     path = path.slice(0, -1);
   }
@@ -13,11 +11,8 @@ export const absolute = (path) => {
   let result = path.split("/").reduce((acc, part) => {
     if (part === ".") return acc;
     else if (part === "..") return parent(acc);
-    else {
-      if (acc === "/") return "/" + part;
-      else return `${acc}/${part}`;
-    }
-  });
+    else return join(acc, part);
+  }, "/");
 
   return result;
 };
@@ -29,6 +24,11 @@ export const parent = (path) => {
   else return dirParts.join("/");
 };
 
+export const join = (stem, leaf) => {
+  if (stem.endsWith("/") || stem.length === 0) return stem + leaf;
+  else return `${stem}/${leaf}`
+}
+
 export const tokenize = text => {
   // TODO apply variable expansion
   // TODO support escaping quotes
@@ -39,15 +39,21 @@ export const tokenize = text => {
 
   const push = (t) => {
     if (glob) {
-      let ref = absolute(env.currentDirectory, t);
-      let dir = parent(ref); // FIXME: Handle more than one level of globbing
-      const re = new RegExp("^" + t.replaceAll("*", ".*") + "/?$");
+      let ref = absolute(t);
+      let dir = parent(ref);
+
+      const dirPoint = t.lastIndexOf("/");
+      const stem = t.substring(0, dirPoint + 1);
+      const leaf = t.substring(dirPoint + 1, t.length);
+
+      const re = new RegExp("^" + leaf.replaceAll("*", ".*") + "/?$");
 
       let files = [];
 
       for (let d of fileSystem.dirs[dir]) {
         if (re.test(d)) {
-          files.push(d);
+          if (d.slice(-1) == "/") d = d.slice(0, -1);
+          files.push(join(stem, d));
         }
       }
 

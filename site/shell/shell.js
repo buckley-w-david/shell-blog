@@ -1,5 +1,5 @@
 import { fileSystem } from "./filesystem.js";
-import { absolute, parent, tokenize } from "./utils.js";
+import { absolute, parent, tokenize, join } from "./utils.js";
 import { commands } from "./commands.js";
 import { env } from "./env.js";
 
@@ -110,14 +110,18 @@ const validate = (text) => {
 };
 
 const completeCommand = () => {
+  // FIXME: Allow tab completion to work correctly with directory traversal
+  // For example ls blog/a<Tab> should complete to the contents of blog/ that start with a
+  // This is partially implemented below but needs some work
   const emptyTab = entry.value.endsWith(" ")
   const tokens = tokenize(entry.value);
-
+  
   if (tabComplete.childNodes.length !== 0) {
     if (tabComplete.dataset.selected === undefined) {
       tabComplete.dataset.selected = tabComplete.childElementCount-1;
     }
     let idx = parseInt(tabComplete.dataset.selected);
+    let mountPoint = parseInt(tabComplete.dataset.mountPoint);
 
     // Unset selected for previous completion
     tabComplete.childNodes[idx].className = "";
@@ -128,34 +132,42 @@ const completeCommand = () => {
     selected.className = "selected"
     tabComplete.dataset.selected = idx;
 
-    if (emptyTab) tokens.push(selected.textContent);
-    else tokens[tokens.length-1] = selected.textContent;
-
+    if (emptyTab) {
+      tokens.push(selected.textContent);
+    }
+    else {
+      tokens[tokens.length-1] = tokens[tokens.length-1].substring(0, mountPoint + 1) + selected.textContent;
+    }
     entry.value = tokens.join(" ");
   } else {
     const completionElement = emptyTab ? "" : tokens[tokens.length-1];
     const completeCommand = (tokens.length === 0 || (tokens.length === 1 && !emptyTab))
 
-    const targets = completeCommand ? Object.keys(commands) : fileSystem.dirs[env.currentDirectory]
+    const mountPoint = completionElement.lastIndexOf("/");
+
+    const base = absolute(completionElement.substring(0, mountPoint + 1));
+    const last = completionElement.substring(mountPoint + 1, completionElement.length);
+
+    const targets = completeCommand ? builtins : fileSystem.dirs[base]
 
     const matches = [];
     for (let file of targets) {
-      if (file.startsWith(completionElement)) {
+      if (file.startsWith(last)) {
         const span = document.createElement("span");
-        span.textContent = file
+        span.textContent = file;
         matches.push(span);
       }
     }
 
-    if (matches.length > 1) {
+    tabComplete.dataset.mountPoint = mountPoint;
+    if (matches.length == 1) {
+      if (emptyTab) tokens.push(matches[0].textContent);
+      else tokens[tokens.length-1] = tokens[tokens.length-1].substring(0, mountPoint + 1) + matches[0].textContent;;
+    } else if (matches.length > 1) {
       for (let span of matches) {
         tabComplete.appendChild(span);
       }
     }
-    if (matches.length == 1) {
-      if (emptyTab) tokens.push(matches[0].textContent);
-      else tokens[tokens.length-1] = matches[0].textContent;
-    } 
     entry.value = tokens.join(" ") + (emptyTab ? " " : "");
   }
 }
@@ -203,6 +215,7 @@ entry.addEventListener("keydown", (event) => {
   if (event.keyCode !== 9) {
     tabComplete.innerHTML = "";
     delete tabComplete.dataset.selected;
+    delete tabComplete.dataset.mountPoint;
   }
 
   if (event.keyCode == 38) {

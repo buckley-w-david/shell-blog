@@ -1,5 +1,5 @@
 import { fileSystem } from "./filesystem.js";
-import { absolute, parent } from "./utils.js";
+import { absolute, parent, join } from "./utils.js";
 import { env } from "./env.js";
 
 const helpMessage = `\
@@ -40,15 +40,15 @@ const ls = (argc, argv) => {
   for (let target of targets) {
     let path = absolute(target);
 
-    // Remove "/" characters at the end of directories
-    // It's a bit of a hack, but meh
-    if (
-      path !== "/" &&
-      path.slice(-1) === "/" &&
-      Object.keys(fileSystem.dirs).includes(path.slice(0, -1))
-    ) {
-      path = path.replace(/\/$/, "");
-    }
+    // // Remove "/" characters at the end of directories
+    // // It's a bit of a hack, but meh
+    // if (
+    //   path !== "/" &&
+    //   path.slice(-1) === "/" &&
+    //   Object.keys(fileSystem.dirs).includes(path.slice(0, -1))
+    // ) {
+    //   path = path.replace(/\/$/, "");
+    // }
 
     if (Object.keys(fileSystem.dirs).includes(path)) {
       if (matches[path] === undefined) {
@@ -136,13 +136,8 @@ const _tree = (root, prefix) => {
       contents.push(prefix + "├── " + node);
     }
     if (node.endsWith("/")) {
-      let dir;
       let name = node.substring(0, node.length - 1);
-      if (root === "/") {
-        dir = root + name;
-      } else {
-        dir = root + "/" + name;
-      }
+      let dir = join(root, name);
       contents = contents.concat(_tree(dir, prefix + "│   "));
     }
   }
