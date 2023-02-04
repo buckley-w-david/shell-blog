@@ -202,8 +202,8 @@ const runCommand = (command) => {
 entry.addEventListener("keydown", (event) => {
   if (event.keyCode !== 9) {
     tabComplete.innerHTML = "";
-  }
     delete tabComplete.dataset.selected;
+  }
 
   if (event.keyCode == 38) {
     if (historyCursor >= history.length) {
