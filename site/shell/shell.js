@@ -7,6 +7,7 @@ const shell = document.getElementById("shell");
 const canvas = document.getElementById("display");
 const entry = document.getElementById("entry");
 const output = document.getElementById("history");
+const tabComplete = document.getElementById("tab-complete");
 
 // Whenever something changes in the terminal, we scoll down (to keep the entry in view)
 const config = { attributes: true, childList: true, subtree: true };
@@ -108,6 +109,57 @@ const validate = (text) => {
   );
 };
 
+const completeCommand = () => {
+  const emptyTab = entry.value.endsWith(" ")
+  const tokens = tokenize(entry.value);
+
+  if (tabComplete.childNodes.length !== 0) {
+    if (tabComplete.dataset.selected === undefined) {
+      tabComplete.dataset.selected = tabComplete.childElementCount-1;
+    }
+    let idx = parseInt(tabComplete.dataset.selected);
+
+    // Unset selected for previous completion
+    tabComplete.childNodes[idx].className = "";
+
+    idx = (idx + 1) % tabComplete.childElementCount;
+
+    const selected = tabComplete.childNodes[idx];
+    selected.className = "selected"
+    tabComplete.dataset.selected = idx;
+
+    if (emptyTab) tokens.push(selected.textContent);
+    else tokens[tokens.length-1] = selected.textContent;
+
+    entry.value = tokens.join(" ");
+  } else {
+    const completionElement = emptyTab ? "" : tokens[tokens.length-1];
+    const completeCommand = (tokens.length === 0 || (tokens.length === 1 && !emptyTab))
+
+    const targets = completeCommand ? Object.keys(commands) : fileSystem.dirs[env.currentDirectory]
+
+    const matches = [];
+    for (let file of targets) {
+      if (file.startsWith(completionElement)) {
+        const span = document.createElement("span");
+        span.textContent = file
+        matches.push(span);
+      }
+    }
+
+    if (matches.length > 1) {
+      for (let span of matches) {
+        tabComplete.appendChild(span);
+      }
+    }
+    if (matches.length == 1) {
+      if (emptyTab) tokens.push(matches[0].textContent);
+      else tokens[tokens.length-1] = matches[0].textContent;
+    } 
+    entry.value = tokens.join(" ") + (emptyTab ? " " : "");
+  }
+}
+
 const runCommand = (command) => {
   historyCursor = 0;
   entry.className = "valid";
@@ -148,6 +200,11 @@ const runCommand = (command) => {
 };
 
 entry.addEventListener("keydown", (event) => {
+  if (event.keyCode !== 9) {
+    tabComplete.innerHTML = "";
+  }
+    delete tabComplete.dataset.selected;
+
   if (event.keyCode == 38) {
     if (historyCursor >= history.length) {
       return;
@@ -166,6 +223,10 @@ entry.addEventListener("keydown", (event) => {
     } else {
       entry.value = history[history.length - historyCursor];
     }
+    return;
+  } else if (event.keyCode === 9 && env.tabComplete) {
+    event.preventDefault();
+    completeCommand();
     return;
   } else if (event.keyCode !== 13) return;
 

@@ -1,5 +1,5 @@
 import { fileSystem } from "./filesystem.js";
-import { absolute, parent, complete } from "./utils.js";
+import { absolute, parent } from "./utils.js";
 import { env } from "./env.js";
 
 const helpMessage = `\
@@ -13,8 +13,8 @@ echo [STRING]... - display a line of text.
 tree [FILE] - list contents of directories in a tree-like format.
 cd dirName - change working directory.
 help - you're looking at it.
-clear - clear the terminal screen\
-enable-tab-complete - Enables tab completion of filenames. Off by default for accessability purposes.
+clear - clear the terminal screen
+disable-tab-complete - Disables tab completion of filenames. Available for accessability purposes.\
 `;
 
 const response = (stdout, stderr, status) => {
@@ -165,11 +165,6 @@ const tree = (argc, argv) => {
 
 const toggleTabComplete = (argc, argv) => {
   env.tabComplete = !env.tabComplete
-  if (env.tabComplete) {
-    document.getElementById("entry").addEventListener("keydown", complete);
-  } else {
-    document.getElementById("entry").removeEventListener("keydown", complete);
-  }
   return success("");
 };
 
@@ -180,5 +175,5 @@ export const commands = {
   cat: cat,
   open: open,
   tree: tree,
-  "enable-tab-complete": toggleTabComplete,
+  "disable-tab-complete": toggleTabComplete,
 };

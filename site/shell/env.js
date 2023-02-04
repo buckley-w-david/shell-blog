@@ -1,1 +1,1 @@
-export const env = { currentDirectory: "/" };
+export const env = { currentDirectory: "/", tabComplete: true };
