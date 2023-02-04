@@ -142,24 +142,24 @@ const _tree = (root, prefix) => {
     }
   }
   return contents;
-}
+};
 
 const tree = (argc, argv) => {
   let root, vroot;
   if (argc == 0) {
     root = env.currentDirectory;
-    vroot = "."
+    vroot = ".";
   } else {
     root = absolute(argv[0]);
-    vroot = argv[0]
+    vroot = argv[0];
   }
   let contents = [vroot].concat(_tree(root, ""));
-  let stdout = contents.join("\n")
+  let stdout = contents.join("\n");
   return response(stdout, undefined, 0);
-}
+};
 
 const toggleTabComplete = (argc, argv) => {
-  env.tabComplete = !env.tabComplete
+  env.tabComplete = !env.tabComplete;
   return success("");
 };
 

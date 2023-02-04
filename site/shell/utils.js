@@ -2,7 +2,7 @@ import { fileSystem } from "./filesystem.js";
 import { env } from "./env.js";
 
 export const absolute = (path) => {
-  if (path[0] !== "/") path = join(env.currentDirectory, path)
+  if (path[0] !== "/") path = join(env.currentDirectory, path);
 
   if (path.slice(-1) === "/" && path !== "/") {
     path = path.slice(0, -1);
@@ -26,10 +26,10 @@ export const parent = (path) => {
 
 export const join = (stem, leaf) => {
   if (stem.endsWith("/") || stem.length === 0) return stem + leaf;
-  else return `${stem}/${leaf}`
-}
+  else return `${stem}/${leaf}`;
+};
 
-export const tokenize = text => {
+export const tokenize = (text) => {
   // TODO apply variable expansion
   // TODO support escaping quotes
 
@@ -46,7 +46,9 @@ export const tokenize = text => {
       const stem = t.substring(0, dirPoint + 1);
       const leaf = t.substring(dirPoint + 1, t.length);
 
-      const re = new RegExp("^" + leaf.replaceAll("*", ".*").replaceAll("?", ".") + "/?$");
+      const re = new RegExp(
+        "^" + leaf.replaceAll("*", ".*").replaceAll("?", ".") + "/?$"
+      );
 
       let files = [];
 
@@ -57,26 +59,28 @@ export const tokenize = text => {
         }
       }
 
-      if (files.length === 0) tokens.push(buffer)
-      else tokens.push(...files)
+      if (files.length === 0) tokens.push(buffer);
+      else tokens.push(...files);
     } else {
       tokens.push(t);
     }
-  }
+  };
 
   for (let i = 0; i < text.length; i++) {
     let c = text[i];
 
-    if (c === ' ') {
+    if (c === " ") {
       push(buffer);
-      buffer = '';
+      buffer = "";
       glob = false;
-    } else if (c === '"' ) {
-        i++;
-        while( i < text.length && text[i] !== '"' ) { buffer += text[i++]; }
+    } else if (c === '"') {
+      i++;
+      while (i < text.length && text[i] !== '"') {
+        buffer += text[i++];
+      }
     } else {
-      glob ||= (c === "*" || c === "?");
-      buffer += c; 
+      glob ||= c === "*" || c === "?";
+      buffer += c;
     }
   }
   if (buffer || tokens.length == 0) push(buffer);
