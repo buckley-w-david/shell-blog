@@ -109,7 +109,7 @@ const validate = (text) => {
   );
 };
 
-const completeCommand = () => {
+const completeCommand = (backwards) => {
   // FIXME: Allow tab completion to work correctly with directory traversal
   // For example ls blog/a<Tab> should complete to the contents of blog/ that start with a
   // This is partially implemented below but needs some work
@@ -126,7 +126,7 @@ const completeCommand = () => {
     // Unset selected for previous completion
     tabComplete.childNodes[idx].className = "";
 
-    idx = (idx + 1) % tabComplete.childElementCount;
+    idx = (idx + 1 - 2*backwards) % tabComplete.childElementCount;
 
     const selected = tabComplete.childNodes[idx];
     selected.className = "selected"
@@ -212,7 +212,7 @@ const runCommand = (command) => {
 };
 
 entry.addEventListener("keydown", (event) => {
-  if (event.keyCode !== 9) {
+  if (event.keyCode !== 9 && event.keyCode !== 16) {
     tabComplete.innerHTML = "";
     delete tabComplete.dataset.selected;
     delete tabComplete.dataset.mountPoint;
@@ -239,7 +239,7 @@ entry.addEventListener("keydown", (event) => {
     return;
   } else if (event.keyCode === 9 && env.tabComplete) {
     event.preventDefault();
-    completeCommand();
+    completeCommand(event.shiftKey);
     return;
   } else if (event.keyCode !== 13) return;
 
