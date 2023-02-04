@@ -1,5 +1,6 @@
 import { fileSystem } from "./filesystem.js";
-import { absolute, parent } from "./utils.js";
+import { absolute, parent, complete } from "./utils.js";
+import { env } from "./env.js";
 
 const helpMessage = `\
 davidbuckley.ca pseudo-shell, version 0.1.0
@@ -13,6 +14,7 @@ tree [FILE] - list contents of directories in a tree-like format.
 cd dirName - change working directory.
 help - you're looking at it.
 clear - clear the terminal screen\
+enable-tab-complete - Enables tab completion of filenames. Off by default for accessability purposes.
 `;
 
 const response = (stdout, stderr, status) => {
@@ -20,8 +22,8 @@ const response = (stdout, stderr, status) => {
 };
 const success = (stdout) => response(stdout, undefined, 0);
 
-const help = (argc, argv, env) => success(helpMessage);
-const ls = (argc, argv, env) => {
+const help = (argc, argv) => success(helpMessage);
+const ls = (argc, argv) => {
   const currentDirectory = env.currentDirectory;
   let stdout = "";
   let stderr = undefined;
@@ -36,7 +38,7 @@ const ls = (argc, argv, env) => {
 
   let matches = {};
   for (let target of targets) {
-    let path = absolute(currentDirectory, target);
+    let path = absolute(target);
 
     // Remove "/" characters at the end of directories
     // It's a bit of a hack, but meh
@@ -86,14 +88,14 @@ const ls = (argc, argv, env) => {
   return response(stdout, stderr, status);
 };
 
-const cat = (argc, argv, env) => {
+const cat = (argc, argv) => {
   const currentDirectory = env.currentDirectory;
   let status = 0;
   let stdout = "";
   let stderr = undefined;
   let contents = [];
   for (let file of argv) {
-    let target = absolute(currentDirectory, file);
+    let target = absolute(file);
 
     if (Object.keys(fileSystem.files).includes(target)) {
       contents.push(fileSystem.files[target]);
@@ -105,11 +107,11 @@ const cat = (argc, argv, env) => {
   return response(stdout, stderr, status);
 };
 
-const open = (argc, argv, env) => {
+const open = (argc, argv) => {
   if (argc !== 1) {
     return response("", "Too many args for open command", 1);
   }
-  let target = absolute(env.currentDirectory, argv[0]);
+  let target = absolute(argv[0]);
   if (Object.keys(fileSystem.files).includes(target)) {
     if (target.slice(-3) === ".md") {
       target = target.slice(0, -3) + ".html";
@@ -121,7 +123,7 @@ const open = (argc, argv, env) => {
   }
 };
 
-const echo = (argc, argv, env) => success(argv.join(" "));
+const echo = (argc, argv) => success(argv.join(" "));
 
 const _tree = (root, prefix) => {
   let contents = [];
@@ -147,19 +149,29 @@ const _tree = (root, prefix) => {
   return contents;
 }
 
-const tree = (argc, argv, env) => {
+const tree = (argc, argv) => {
   let root, vroot;
   if (argc == 0) {
     root = env.currentDirectory;
     vroot = "."
   } else {
-    root = absolute(env.currentDirectory, argv[0]);
+    root = absolute(argv[0]);
     vroot = argv[0]
   }
   let contents = [vroot].concat(_tree(root, ""));
   let stdout = contents.join("\n")
   return response(stdout, undefined, 0);
 }
+
+const toggleTabComplete = (argc, argv) => {
+  env.tabComplete = !env.tabComplete
+  if (env.tabComplete) {
+    document.getElementById("entry").addEventListener("keydown", complete);
+  } else {
+    document.getElementById("entry").removeEventListener("keydown", complete);
+  }
+  return success("");
+};
 
 export const commands = {
   help: help,
@@ -168,4 +180,5 @@ export const commands = {
   cat: cat,
   open: open,
   tree: tree,
+  "enable-tab-complete": toggleTabComplete,
 };

@@ -79,3 +79,13 @@ img {
   max-width: 50%;
   max-height: 50vh;
 }
+
+.tab-complete span {
+  margin-right: 10px;
+}
+
+.tab-complete span.selected {
+  -webkit-filter: invert(100%);
+  filter: invert(100%);
+}
+

@@ -1,9 +1,10 @@
 import { fileSystem } from "./filesystem.js";
+import { env } from "./env.js";
 
-export const absolute = (currentDirectory, path) => {
+export const absolute = (path) => {
   if (path[0] !== "/") {
-    if (currentDirectory === "/") path = `/${path}`;
-    else path = `${currentDirectory}/${path}`;
+    if (env.currentDirectory === "/") path = `/${path}`;
+    else path = `${env.currentDirectory}/${path}`;
   }
   if (path.slice(-1) === "/" && path !== "/") {
     path = path.slice(0, -1);
@@ -28,8 +29,9 @@ export const parent = (path) => {
   else return dirParts.join("/");
 };
 
-export const tokenize = (currentDirectory, text) => {
+export const tokenize = text => {
   // TODO apply variable expansion
+  // TODO support escaping quotes
 
   let tokens = [];
   let buffer = "";
@@ -37,7 +39,7 @@ export const tokenize = (currentDirectory, text) => {
 
   const push = (t) => {
     if (glob) {
-      let ref = absolute(currentDirectory, t);
+      let ref = absolute(env.currentDirectory, t);
       let dir = parent(ref); // FIXME: Handle more than one level of globbing
       const re = new RegExp("^" + t.replaceAll("*", ".*") + "/?$");
 
@@ -75,3 +77,51 @@ export const tokenize = (currentDirectory, text) => {
 
   return tokens;
 };
+
+export const complete = () => {
+  const entry = document.getElementById("entry");
+  const tabComplete = document.getElementById("tab-complete");
+  if (event.keyCode == 9) {
+    event.preventDefault();
+    const tokens = tokenize(entry.value);
+
+    if (tabComplete.textContent !== "") {
+      if (tabComplete.dataset.selected === undefined) {
+        tabComplete.dataset.selected = tabComplete.childElementCount-1;
+      }
+      let idx = parseInt(tabComplete.dataset.selected);
+
+      // Unset selected for previous completion
+      tabComplete.childNodes[idx].className = "";
+
+      idx = (idx + 1) % tabComplete.childElementCount;
+
+      const selected = tabComplete.childNodes[idx];
+      selected.className = "selected"
+      tabComplete.dataset.selected = idx;
+
+      tokens[tokens.length-1] = selected.textContent;
+      entry.value = tokens.join(" ");
+    } else {
+      const completionElement = tokens[tokens.length-1];
+      const matches = [];
+      for (let file of fileSystem.dirs[env.currentDirectory]) {
+        if (file.startsWith(completionElement)) {
+          const span =  document.createElement("span");
+          span.textContent = file
+          matches.push(span);
+        }
+      }
+      if (matches.length == 1) {
+        tokens[tokens.length-1] = matches[0].textContent;
+      } else if (matches.length > 1) {
+        for (let span of matches) {
+          tabComplete.appendChild(span);
+        }
+      }
+      entry.value = tokens.join(" ");
+    }
+  } else {
+    tabComplete.innerHTML = "";
+  }
+}
