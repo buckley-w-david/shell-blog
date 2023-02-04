@@ -19,7 +19,7 @@ dist/index.html: $(shell find site -type f) ready
 	# Copy static assets
 	cp -r site/filesystem/blog/assets dist/blog/
 	cp -r site/filesystem/toys/*.js site/filesystem/toys/*.png dist/toys/
-	cp -r site/*{.css,.html,.png,.xml,ico,.svg,.webmanifest} site/ttf site/woff2 dist/
+	cp -r site/*.css site/*.html site/*.png site/*.xml site/*ico site/*.svg site/*.webmanifest site/ttf site/woff2 dist/
 	# Generate toy html pages
 	poetry run build-toys
 	# Generate alt index (with dynamic list of pages)
