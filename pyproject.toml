@@ -14,6 +14,7 @@ Jinja2 = "^3.1.2"
 [tool.poetry.scripts]
 build-filesystem = "blog_builder.filesystem:build"
 build-alt-index = "blog_builder.alt_index:build"
+build-index = "blog_builder.index:build"
 build-toys = "blog_builder.toys:build"
 compile-markdown = "blog_builder.markdown:build"
 
