@@ -34,7 +34,7 @@ dist/index.html: $(shell find site -type f) ready
 	poetry run build-alt-index > dist/home.html
 
 watch:
-	find . -type f | entr make
+	find site/ Makefile blog_builder pyproject.toml poetry.lock -type f | entr make
 
 server: dist/index.html
 	cd dist/; python -m http.server 8000
