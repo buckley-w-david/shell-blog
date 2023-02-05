@@ -139,10 +139,9 @@ const completeCommand = (backwards) => {
     entry.value = tokens.join(" ");
   } else {
     const completionElement = emptyTab ? "" : tokens[tokens.length - 1];
-    const completeCommand =
-      tokens.length === 0 || (tokens.length === 1 && !emptyTab);
-
     const mountPoint = completionElement.lastIndexOf("/");
+    const completeCommand =
+      tokens.length === 0 || (tokens.length === 1 && !emptyTab && mountPoint < 1);
 
     const base = absolute(completionElement.substring(0, mountPoint + 1));
     const last = completionElement.substring(
@@ -150,7 +149,8 @@ const completeCommand = (backwards) => {
       completionElement.length
     );
 
-    const targets = completeCommand ? builtins : fileSystem.dirs[base];
+    const directories = fileSystem.dirs[base].filter(item => item.endsWith("/"));
+    const targets = completeCommand ? builtins.concat(directories) : fileSystem.dirs[base];
 
     const matches = [];
     for (let file of targets) {
