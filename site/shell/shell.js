@@ -232,13 +232,17 @@ entry.addEventListener("keydown", (event) => {
   }
 
   if (event.keyCode == 38) {
+    event.preventDefault();
     if (historyCursor >= history.length) {
       return;
     }
     historyCursor += 1;
-    entry.value = history[history.length - historyCursor];
+    let content = history[history.length - historyCursor];
+    entry.value = content;
+    entry.setSelectionRange(content.length, content.length);
     return;
   } else if (event.keyCode == 40) {
+    event.preventDefault();
     if (historyCursor == 0) {
       return;
     }
@@ -247,7 +251,9 @@ entry.addEventListener("keydown", (event) => {
     if (historyCursor == 0) {
       entry.value = "";
     } else {
-      entry.value = history[history.length - historyCursor];
+      let content = history[history.length - historyCursor];
+      entry.value = content;
+      entry.setSelectionRange(content.length, content.length);
     }
     return;
   } else if (event.keyCode === 9 && env.tabComplete) {
