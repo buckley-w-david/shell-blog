@@ -301,7 +301,7 @@
     if (shell) shell.className = "active";
     sprites.remove();
     document.removeEventListener("click", flap);
-    window.postMessage("executables-close");
+    window.postMessage({ type: "executables-close" });
   };
 
   await main();

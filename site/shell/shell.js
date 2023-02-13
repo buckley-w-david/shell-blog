@@ -75,14 +75,22 @@ const exec = (command) => {
         scriptTag.type = "text/javascript";
         scriptTag.src = abs(command[0]) + ".js";
         scriptTag.id = "inject";
+        scriptTag.dataset.argv = JSON.stringify(command.slice(1));
         const remove = (event) => {
-          if (event.data == "executables-close") {
+          if (event.data.type === "executables-close") {
             scriptTag.remove();
             canvas.className = "inactive";
             shell.className = "active";
             const context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
             window.removeEventListener("message", remove);
+          } else if (event.data.type === "load-file") {
+            event.source.postMessage({
+              type: "file",
+              content: fileSystem.files[absolute(event.data.file)],
+            });
+          } else if (event.data.type === "save-file") {
+            fileSystem.files[absolute(event.data.file)] = event.data.content;
           }
         };
         window.addEventListener("message", remove);
