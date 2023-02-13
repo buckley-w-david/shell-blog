@@ -4,22 +4,25 @@
   const thisScript = document.getElementById("inject");
   const argv = JSON.parse(thisScript.dataset.argv);
 
-  window.postMessage({
-    type: "load-file",
-    file: argv[0],
-  });
 
   let fileContent = "";
-  await new Promise((resolve, reject) => {
-    const remove = (event) => {
-      if (event.data.type == "file") {
-        fileContent = event.data.content;
-        window.removeEventListener("message", remove);
-        resolve();
-      }
-    };
-    window.addEventListener("message", remove);
-  });
+  if (argv[0]) {
+    window.postMessage({
+      type: "load-file",
+      file: argv[0],
+    });
+
+    await new Promise((resolve, reject) => {
+      const remove = (event) => {
+        if (event.data.type == "file") {
+          fileContent = event.data.content;
+          window.removeEventListener("message", remove);
+          resolve();
+        }
+      };
+      window.addEventListener("message", remove);
+    });
+  }
 
   const container = document.createElement("div");
   container.className = "container";
