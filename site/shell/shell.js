@@ -85,12 +85,23 @@ const exec = (command) => {
             context.clearRect(0, 0, canvas.width, canvas.height);
             window.removeEventListener("message", remove);
           } else if (event.data.type === "load-file") {
+            let content = fileSystem.files[absolute(event.data.file)];
             event.source.postMessage({
               type: "file",
-              content: fileSystem.files[absolute(event.data.file)],
+              content: content ? content : "",
             });
           } else if (event.data.type === "save-file") {
-            fileSystem.files[absolute(event.data.file)] = event.data.content;
+            let target = absolute(event.data.file);
+            const dirPoint = target.lastIndexOf("/");
+            const stem = target.substring(0, dirPoint + 1);
+            const leaf = target.substring(dirPoint + 1, target.length);
+
+            let dir = stem === "/" ? "/" : stem.slice(0, -1)
+            if (!fileSystem.dirs[dir].includes(leaf)) {
+              fileSystem.dirs[dir].push(leaf);
+            }
+
+            fileSystem.files[target] = event.data.content;
           }
         };
         window.addEventListener("message", remove);
