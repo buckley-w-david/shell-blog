@@ -91,7 +91,6 @@
     textCell.value = lineContent;
 
     textCell.addEventListener("keydown", (event) => {
-      console.log(event, stickyPosition);
       if (event.keyCode !== 38 && event.keyCode !== 40) stickyPosition = -1;
 
       if (event.keyCode === 38 || event.keyCode === 40) {
