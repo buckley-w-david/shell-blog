@@ -10,7 +10,7 @@ This project was inspired by the XKCD comic [Ineffective Sorts](https://xkcd.com
 
 ![Ineffective Sorts](https://imgs.xkcd.com/comics/ineffective_sorts.png)
 
-{{< blockquote author="Randall Munroe" >}}StackSort connects to StackOverflow, searches for 'sort a list', and downloads and runs code snippets until the list is sorted.{{< /blockquote >}}
+> StackSort connects to StackOverflow, searches for 'sort a list', and downloads and runs code snippets until the list is sorted.
 
 I wanted to be able to download and run code from StackOverflow the same way I would use any normal Python package.
 
