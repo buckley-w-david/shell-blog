@@ -78,6 +78,7 @@
   `;
 
   let table;
+  let stickyPosition = -1;
   const createRow = (lineContent) => {
     const row = document.createElement("tr");
     row.className = "line";
@@ -90,7 +91,12 @@
     textCell.value = lineContent;
 
     textCell.addEventListener("keydown", (event) => {
+      console.log(event, stickyPosition);
+      if (event.keyCode !== 38 && event.keyCode !== 40) stickyPosition = -1;
+
       if (event.keyCode === 38 || event.keyCode === 40) {
+        if (stickyPosition === -1) stickyPosition = textCell.selectionStart;
+
         // Up/Down Arrow
         let sibling =
           event.keyCode === 38
@@ -101,8 +107,8 @@
           let target = sibling.childNodes[1];
           target.focus();
           target.setSelectionRange(
-            textCell.selectionStart,
-            textCell.selectionStart
+            stickyPosition,
+            stickyPosition
           );
         }
       } else if (event.keyCode === 13) {
