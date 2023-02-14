@@ -3,6 +3,7 @@ import { absolute, parent, tokenize, join } from "./utils.js";
 import { commands } from "./commands.js";
 import { env } from "./env.js";
 
+const term = document.getElementById("terminal");
 const shell = document.getElementById("shell");
 const canvas = document.getElementById("display");
 const entry = document.getElementById("entry");
@@ -10,6 +11,7 @@ const output = document.getElementById("history");
 const tabComplete = document.getElementById("tab-complete");
 
 // Whenever something changes in the terminal, we scoll down (to keep the entry in view)
+// FIXME: This isn't a very good solution
 const config = { attributes: true, childList: true, subtree: true };
 const observer = new MutationObserver((mutationList, observer) => {
   shell.scrollIntoView(false);
@@ -96,7 +98,7 @@ const exec = (command) => {
             const stem = target.substring(0, dirPoint + 1);
             const leaf = target.substring(dirPoint + 1, target.length);
 
-            let dir = stem === "/" ? "/" : stem.slice(0, -1)
+            let dir = stem === "/" ? "/" : stem.slice(0, -1);
             if (!fileSystem.dirs[dir].includes(leaf)) {
               fileSystem.dirs[dir].push(leaf);
             }
@@ -105,7 +107,7 @@ const exec = (command) => {
           }
         };
         window.addEventListener("message", remove);
-        document.body.appendChild(scriptTag);
+        terminal.appendChild(scriptTag);
       } else {
         stderr = `Unknown command: ${command[0]}`;
         status = 127;
@@ -160,7 +162,8 @@ const completeCommand = (backwards) => {
     const completionElement = emptyTab ? "" : tokens[tokens.length - 1];
     const mountPoint = completionElement.lastIndexOf("/");
     const completeCommand =
-      tokens.length === 0 || (tokens.length === 1 && !emptyTab && mountPoint < 1);
+      tokens.length === 0 ||
+      (tokens.length === 1 && !emptyTab && mountPoint < 1);
 
     const base = absolute(completionElement.substring(0, mountPoint + 1));
     const last = completionElement.substring(
@@ -168,8 +171,12 @@ const completeCommand = (backwards) => {
       completionElement.length
     );
 
-    const directories = fileSystem.dirs[base].filter(item => item.endsWith("/"));
-    const targets = completeCommand ? builtins.concat(directories) : fileSystem.dirs[base];
+    const directories = fileSystem.dirs[base].filter((item) =>
+      item.endsWith("/")
+    );
+    const targets = completeCommand
+      ? builtins.concat(directories)
+      : fileSystem.dirs[base];
 
     const matches = [];
     for (let file of targets) {
@@ -243,6 +250,7 @@ entry.addEventListener("keydown", (event) => {
   }
 
   if (event.keyCode == 38) {
+    // Up Arrow
     event.preventDefault();
     if (historyCursor >= history.length) {
       return;
@@ -253,6 +261,7 @@ entry.addEventListener("keydown", (event) => {
     entry.setSelectionRange(content.length, content.length);
     return;
   } else if (event.keyCode == 40) {
+    // Down Arrow
     event.preventDefault();
     if (historyCursor == 0) {
       return;
@@ -268,10 +277,12 @@ entry.addEventListener("keydown", (event) => {
     }
     return;
   } else if (event.keyCode === 9 && env.tabComplete) {
+    // Tab
     event.preventDefault();
     completeCommand(event.shiftKey);
+    shell.scrollIntoView(false);
     return;
-  } else if (event.keyCode !== 13) return;
+  } else if (event.keyCode !== 13 || (event.ctrlKey && event.shiftKey)) return;
 
   runCommand(entry.value);
 });
@@ -280,6 +291,81 @@ entry.addEventListener("keyup", (event) => {
   if (validate(entry.value)) entry.className = "valid";
   else entry.className = "invalid";
 });
+
+if (window.self !== window.top) {
+  const escape = document.getElementById("escape");
+  escape.remove();
+} else {
+  // Realistically this belongs in some kind of "terminal" module instead of the "shell" one.
+  // But getting that abstraction right sounds like more work than its worth
+  let handler = (event) => {
+    if (event.ctrlKey && event.shiftKey && event.keyCode === 13) {
+      // ctrl+shift+Return
+      event.preventDefault();
+      let frame = document.createElement("iframe");
+      frame.src = window.location;
+      frame.addEventListener("load", (event) => {
+        frame.contentWindow.addEventListener("keydown", handler);
+        frame.contentWindow.document.body.querySelector("#entry").focus();
+      });
+
+      let active = document.activeElement;
+      if (active.tagName !== "IFRAME") active = terminal;
+
+      if (active?.nextElementSibling)
+        active.parentElement.insertBefore(frame, active.nextElementSibling);
+      else document.body.appendChild(frame);
+    } else if (
+      event.ctrlKey &&
+      event.shiftKey &&
+      (event.keyCode === 219 || event.keyCode === 221)
+    ) {
+      // ctrl+shift+[ or ]
+      let active = document.activeElement;
+      if (active.tagName !== "IFRAME") active = terminal;
+
+      let target =
+        event.keyCode === 219
+          ? active.previousElementSibling
+          : active.nextElementSibling;
+      if (!target) {
+        let children = active.parentElement.children;
+        target =
+          event.keyCode === 219 ? children[children.length - 1] : children[0];
+      }
+      let targetEntry;
+      if (target.tagName === "IFRAME")
+        targetEntry =
+          target.contentWindow.document.body.querySelector("#entry");
+      else targetEntry = target.querySelector("#entry");
+      targetEntry.focus();
+    } else if (event.ctrlKey && event.keyCode === 68) {
+      // ctrl+d
+      event.preventDefault();
+      let active = document.activeElement;
+      if (active.tagName !== "IFRAME") {
+        active = terminal;
+        terminal = null;
+      }
+      if (!active) return
+
+      let target;
+      if (active.previousElementSibling) target = active.previousElementSibling;
+      else if (active.nextElementSibling) target = active.nextElementSibling;
+
+      active.remove();
+      if (!target) return;
+
+      let targetEntry;
+      if (target.tagName === "IFRAME")
+        targetEntry =
+          target.contentWindow.document.body.querySelector("#entry");
+      else targetEntry = target.querySelector("#entry");
+      targetEntry.focus();
+    }
+  };
+  window.addEventListener("keydown", handler);
+}
 
 const params = new Proxy(new URLSearchParams(window.location.search), {
   get: (searchParams, prop) => searchParams.get(prop),

@@ -16,13 +16,36 @@
   --main-font-size: 18;
   --main-font-family: "Iosevka Web";
 }
-
+*
 * {
   background-color: var(--main-bg-color);
   color: var(--main-text-color);
   font-size: var(--main-font-size);
   font-family: var(--main-font-family);
 }
+
+html, body {
+  height: 99%;
+}
+
+body {
+  display: flex;
+  justify-content: space-between;
+}
+
+body > *:not(:first-child) {
+  border-left: white solid 1px;
+}
+
+body > * {
+  border: none;
+  flex: 1;
+}
+
+.terminal {
+  overflow-y: scroll;
+}
+
 
 p,
 pre {

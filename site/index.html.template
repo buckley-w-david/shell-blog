@@ -13,24 +13,26 @@
     <meta name="theme-color" content="#ffffff" />
   </head>
   <body>
-    <canvas class="inactive" id="display"></canvas>
-    <div id="shell" class="active">
-      <div id="history">
-        <pre>
-Hi! If you're not sure what's going on right now, try entering "help"
-If you need to use tab to navigate the page, please enter "disable-tab-complete"
-        </pre>
+    <div class="terminal" id="terminal">
+      <canvas class="inactive" id="display"></canvas>
+      <div id="shell" class="active">
+        <div id="history">
+          <pre>
+  Hi! If you're not sure what's going on right now, try entering "help"
+  If you need to use tab to navigate the page, please enter "disable-tab-complete"
+          </pre>
+        </div>
+        <div class="entry-line">
+          <p class="ps1">
+            <span class="user">guest</span
+            ><span class="domain">@davidbuckley.ca</span>
+            <span class="directory">/</span>>
+          </p>
+          <input type="text" id="entry" name="entry" autofocus />
+        </div>
+        <p id="tab-complete" class="tab-complete"></p>
       </div>
-      <div class="entry-line">
-        <p class="ps1">
-          <span class="user">guest</span
-          ><span class="domain">@davidbuckley.ca</span>
-          <span class="directory">/</span>>
-        </p>
-        <input type="text" id="entry" name="entry" autofocus />
-      </div>
-      <p id="tab-complete" class="tab-complete"></p>
+      <a id="escape" href="home.html">This is dumb and I don't like it.</a>
     </div>
-    <a id="escape" href="home.html">This is dumb and I don't like it.</a>
   </body>
 </html>
