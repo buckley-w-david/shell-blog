@@ -11,6 +11,7 @@ cat [FILE]... - concatenate files and print on the standard output. Supports Ima
 open [FILE] - open up a given resource in a new tab.
 echo [STRING]... - display a line of text.
 tree [FILE] - list contents of directories in a tree-like format.
+latest - display the content of the latest blog post
 cd dirName - change working directory.
 help - you're looking at it.
 clear - clear the terminal screen
@@ -148,6 +149,12 @@ const tree = (argc, argv) => {
   return response(stdout, undefined, 0);
 };
 
+const latest = (argc, argv) => {
+  const file = fileSystem.dirs["/blog"][0];
+  const content = fileSystem.files[`/blog/${file}`];
+  return success(content);
+}
+
 const toggleTabComplete = (argc, argv) => {
   env.tabComplete = !env.tabComplete;
   return success("");
@@ -160,5 +167,6 @@ export const commands = {
   cat: cat,
   open: open,
   tree: tree,
+  latest: latest,
   "disable-tab-complete": toggleTabComplete,
 };
