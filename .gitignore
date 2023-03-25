@@ -13,3 +13,4 @@ build/
 *.egg-info/
 ready
 mermaid-filter.err
+.puppeteer.json

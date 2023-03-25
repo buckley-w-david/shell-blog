@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+GIT_SHA=$(git rev-parse HEAD)
+podman build --tag blog-builder:$GIT_SHA .
+podman run --rm -v $PWD:/app blog-builder:$GIT_SHA
