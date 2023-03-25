@@ -1,0 +1,13 @@
+#!/usr/bin/env fish
+
+set today (date +%Y-%m-%d)
+
+set target (find $PROJECT_ROOT/site/filesystem/blog/ -maxdepth 1 -mindepth 1 -type f -name "*$argv[1]*" | fzf -1)
+
+if not test -e target
+    echo -n "\
+Date: $today
+" >$target
+end
+
+exec nvim $target
