@@ -80,6 +80,8 @@ const ls = (argc, argv) => {
 };
 
 const cat = (argc, argv) => {
+  if (argc == 0) argv = ["/blog/assets/shelley.jpg"];
+
   const currentDirectory = env.currentDirectory;
   let status = 0;
   let stdout = "";
