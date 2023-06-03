@@ -15,6 +15,7 @@ dist/index.html: $(shell find site -type f) ready
 
 	# Copy static assets
 	cp -r site/filesystem/blog/assets dist/blog/
+	cp -r site/filesystem/assets dist/
 	cp -r site/filesystem/toys/*.js site/filesystem/toys/*.png dist/toys/
 	cp -r site/*.css site/*.png site/*.xml site/*ico site/*.svg site/*.webmanifest site/ttf site/woff2 dist/
 

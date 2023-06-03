@@ -80,7 +80,10 @@ const ls = (argc, argv) => {
 };
 
 const cat = (argc, argv) => {
-  if (argc == 0) argv = ["/blog/assets/shelley.jpg"];
+  if (argc == 0) {
+    let images = fileSystem.dirs["/assets/shelley"];
+    argv = ["/assets/shelley/" + images[Math.floor(Math.random()*images.length)]];
+  }
 
   const currentDirectory = env.currentDirectory;
   let status = 0;
