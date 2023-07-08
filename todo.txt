@@ -1,0 +1,3 @@
+1. rename css (no longer shell.css)
+2. unify process and shell logic in terminal and kernal
+3. Move hidden processes to a separate area

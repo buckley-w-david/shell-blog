@@ -1,26 +1,23 @@
 (async () => {
-  const shell = document.getElementById("shell");
-  if (shell) shell.className = "inactive";
-  const thisScript = document.getElementById("inject");
-  const argv = JSON.parse(thisScript.dataset.argv);
+  const thisScript = document.currentScript;
+  const process = document.getElementById(thisScript.dataset.processId);
 
+  const argv = JSON.parse(process.dataset.argv);
 
   let fileContent = "";
   if (argv[0]) {
-    window.postMessage({
-      type: "load-file",
-      file: argv[0],
-    });
-
     await new Promise((resolve, reject) => {
       const remove = (event) => {
-        if (event.data.type == "file") {
-          fileContent = event.data.content;
-          window.removeEventListener("message", remove);
+        if (event.detail.type == "read") {
+          fileContent = event.detail.content;
+          window.removeEventListener("syscall-response", remove);
           resolve();
         }
       };
-      window.addEventListener("message", remove);
+      process.addEventListener("syscall-response", remove);
+
+      const event = new CustomEvent("syscall", { detail: { type: "read", file: argv[0], source: process } });
+      window.dispatchEvent(event);
     });
   }
 
@@ -201,7 +198,7 @@
   container.appendChild(message);
   container.appendChild(instructions);
 
-  thisScript.parentElement.insertBefore(container, thisScript);
+  process.appendChild(container);
 
   table.childNodes[0].childNodes[1].focus();
   table.childNodes[0].childNodes[1].setSelectionRange(0, 0);
@@ -214,23 +211,15 @@
         resolve();
       } else if (event.ctrlKey && event.keyCode === 79) {
         // ctrl-o
-        // TODO: Feedback
         let count = table.childElementCount;
         message.innerHTML = `<span class="content">[ Wrote ${count} line${ count === 1 ? "" : "s" } ]</span>`;
         event.preventDefault();
-        window.postMessage({
-          type: "save-file",
-          file: argv[0],
-          content: render(),
-        });
+        const writeEvent = new CustomEvent("syscall", { detail: { type: "write", file: argv[0], content: render(), source: process } });
+        window.dispatchEvent(writeEvent);
       }
     });
   });
 
-  container.remove();
-  if (shell) {
-    shell.className = "active";
-    shell.querySelector("#entry").focus();
-  }
-  window.postMessage({ type: "executables-close" });
+  const event = new CustomEvent("syscall", { detail: { type: "exit", process: process } });
+  window.dispatchEvent(event);
 })();

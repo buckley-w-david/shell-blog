@@ -1,0 +1,2 @@
+#!/bin/sh
+find site/ Makefile blog_builder pyproject.toml poetry.lock -type f | entr make

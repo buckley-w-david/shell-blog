@@ -1,8 +1,9 @@
 import { fileSystem } from "./filesystem.js";
 import { env } from "./env.js";
 
-export const absolute = (path) => {
-  if (path[0] !== "/") path = join(env.currentDirectory, path);
+// TODO: Move all usage over to makeAbsolute
+export const makeAbsolute = (pwd, path) => {
+  if (path[0] !== "/") path = join(pwd, path);
 
   if (path.slice(-1) === "/" && path !== "/") {
     path = path.slice(0, -1);
@@ -29,7 +30,8 @@ export const join = (stem, leaf) => {
   else return `${stem}/${leaf}`;
 };
 
-export const tokenize = (text) => {
+// pwd is needed to support globbing
+export const tokenize = (pwd, text) => {
   // TODO apply variable expansion
   // TODO support escaping quotes
 
@@ -39,7 +41,7 @@ export const tokenize = (text) => {
 
   const push = (t) => {
     if (glob) {
-      let ref = absolute(t);
+      let ref = makeAbsolute(pwd, t);
       let dir = parent(ref);
 
       const dirPoint = t.lastIndexOf("/");

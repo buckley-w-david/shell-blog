@@ -12,11 +12,11 @@ def build():
 
         local_path = Path(*parts)
         subprocess.run([
-            "pandoc", "-s", 
-            "-c", "/blog.css", 
-            "--metadata", "title=%s" % title(file), 
-            "-H", "site/header.html.part", 
-            "-F", "mermaid-filter",
-            str(file), 
+            "pandoc", "-s",
+            "-c", "/blog.css",
+            "--metadata", "title=%s" % title(file),
+            "-H", "site/header.html.part",
+            # "-F", "mermaid-filter",
+            str(file),
             "-o", str(dest / local_path.with_suffix(".html"))
         ])

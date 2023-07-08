@@ -30,22 +30,53 @@ html, body {
 
 body {
   display: flex;
-  justify-content: space-between;
 }
 
-body > *:not(:first-child) {
-  border-left: white solid 1px;
+.d-none {
+  display: none !important;
 }
 
-body > * {
-  border: none;
-  flex: 1;
+#escape {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .terminal {
-  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  /*
+   * This var is dynamically set on the terminal element in JS
+   * It was the only way I could find to get the behaviour I wanted
+   */
+  grid-template-rows: repeat(var(--process-rows), 1fr);
+  flex: 1;
+  border: none;
 }
 
+.terminal .process:first-of-type {
+  grid-row: 1/-1;
+  border: none;
+}
+
+.terminal .process:nth-of-type(2) {
+  padding-top: 0;
+  border-top: none;
+}
+
+.terminal .process {
+  padding-top: 10px;
+  border-top: white solid 1px;
+}
+
+.terminal .process:not(:first-of-type) {
+  grid-column: 2;
+}
+
+.terminal .process:not(:first-of-type) {
+  border-left: white solid 1px;
+  padding-left: 10px;
+}
 
 p,
 pre {
@@ -57,22 +88,21 @@ pre {
   word-wrap: break-word;
 }
 
-#escape {
-  position: absolute;
-  top: 0;
-  right: 0;
+.shell,.process {
+  flex: 1;
+  overflow-y: auto;
 }
 
-#shell .entry-line {
+.shell .entry-line {
   display: flex;
   flex-direction: row;
 }
 
-#entry.invalid {
+.entry.invalid {
   color: var(--invalid-text-color);
 }
 
-#shell .ps1 {
+.shell .ps1 {
   margin-right: 5px;
 }
 
@@ -91,7 +121,7 @@ pre {
   display: none;
 }
 
-#entry {
+.entry {
   border: none;
   resize: none;
   outline: none;

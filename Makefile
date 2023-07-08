@@ -23,13 +23,13 @@ dist/index.html: $(shell find site -type f) ready
 	poetry run build-toys
 
 	# Build js and index html
-	poetry run build-filesystem > build/shell/filesystem.js
-	esbuild build/shell/shell.js --bundle --minify --outfile=build/shell.js
+	poetry run build-filesystem > build/javascript/shell/filesystem.js
+	esbuild build/javascript/application.js --bundle --minify --outfile=build/application.js
 
 	set -e ;\
-	JSHASH=$$(sha256sum build/shell.js | awk '{print $$1}') ;\
+	JSHASH=$$(sha256sum build/application.js | awk '{print $$1}') ;\
 	CSSHASH=$$(sha256sum build/shell.css | awk '{print $$1}') ;\
-	mv build/shell.js dist/shell.$$JSHASH.js ;\
+	mv build/application.js dist/application.$$JSHASH.js ;\
 	mv build/shell.css dist/shell.$$CSSHASH.css ;\
 	poetry run build-index $$JSHASH $$CSSHASH > dist/index.html ;
 	poetry run build-alt-index > dist/home.html

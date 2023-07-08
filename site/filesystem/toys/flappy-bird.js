@@ -34,9 +34,13 @@
 
     Base: { x: 0, y: 857, width: 336, height: 112 },
   };
-  const canvas = document.getElementById("display");
+
+  const script = document.currentScript;
+  const process = document.getElementById(script.dataset.processId);
+  const canvas = document.createElement("canvas");
+  process.appendChild(canvas);
   const ctx = canvas.getContext("2d");
-  const shell = document.getElementById("shell");
+
   const sprites = new Image();
   sprites.src = "/toys/flappy-bird.png";
 
@@ -132,7 +136,6 @@
   const cw = 228;
   const ch = 512;
   canvas.className = "active";
-  if (shell) shell.className = "inactive";
   canvas.width = cw;
   canvas.height = ch;
 
@@ -297,11 +300,12 @@
   };
 
   const exit = () => {
-    canvas.className = "inactive";
-    if (shell) shell.className = "active";
     sprites.remove();
+    canvas.remove();
     document.removeEventListener("click", flap);
-    window.postMessage({ type: "executables-close" });
+
+    const event = new CustomEvent("syscall", { detail: { type: "exit", process: process } });
+    window.dispatchEvent(event);
   };
 
   await main();

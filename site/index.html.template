@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>David Buckley</title>
-    <script type="module" src="shell.{{ js_hash }}.js"></script>
+    <script type="module" src="application.{{ js_hash }}.js"></script>
     <link rel="stylesheet" href="shell.{{ css_hash }}.css" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -12,27 +12,48 @@
     <meta name="msapplication-TileColor" content="#da532c" />
     <meta name="theme-color" content="#ffffff" />
   </head>
-  <body>
-    <div class="terminal" id="terminal">
-      <canvas class="inactive" id="display"></canvas>
-      <div id="shell" class="active">
-        <div id="history">
+  <body data-controller="kernal" data-action="syscall@window->kernal#syscall" data-kernal-terminal-outlet=".terminal" data-kernal-shell-outlet=".shell">
+    <div
+      class="terminal" id="terminal" style="--rows: 1;"
+      data-controller="terminal"
+      data-action="keydown.ctrl+shift+enter@window->terminal#spawn keydown.ctrl+shift+left@window->terminal#swapLeft keydown.ctrl+shift+right@window->terminal#swapRight keydown.ctrl+d@window->terminal#close"
+      data-terminal-active-value="0"
+      data-kernal-target="terminal"
+      data-terminal-shell-outlet=".shell">
+      <div
+        class="active shell process"
+        data-controller="shell"
+        data-shell-completeSelected-value="0"
+        data-shell-completeMount-value="0"
+        data-shell-pwd-value="/"
+        data-action="click->terminal#activate"
+        data-kernal-target="shell"
+        data-terminal-target="shell">
+        <div class="history" data-shell-target="history">
           <pre>
   Hi! If you're not sure what's going on right now, try entering "help"
   If you need to use tab to navigate the page, please enter "disable-tab-complete"
           </pre>
         </div>
-        <div class="entry-line">
-          <p class="ps1">
+        <div class="entry-line" data-shell-target="entryLine">
+          <p class="ps1" data-shell-target="ps1">
             <span class="user">guest</span
             ><span class="domain">@davidbuckley.ca</span>
-            <span class="directory">/</span>>
+            <span class="directory" data-shell-target="directory">/</span>>
           </p>
-          <input type="text" id="entry" name="entry" autofocus />
+          <input
+            type="text"
+            class="entry"
+            data-shell-target="entry"
+            data-action="keydown.up->shell#historyBack keydown.down->shell#historyForward keydown.shift+tab->shell#completionBack keydown.tab->shell#completionForward keydown->shell#completionClear keydown.enter->shell#execute keyup->shell#validate focusin->terminal#activate"
+            name="entry" autofocus />
         </div>
-        <p id="tab-complete" class="tab-complete"></p>
+        <p
+          class="tab-complete"
+          data-shell-target="complete"
+        ></p>
       </div>
-      <a id="escape" href="home.html">This is dumb and I don't like it.</a>
     </div>
+    <a id="escape" href="home.html">This is dumb and I don't like it.</a>
   </body>
 </html>
