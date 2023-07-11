@@ -57,6 +57,7 @@ body {
 .terminal .process:first-of-type {
   grid-row: 1/-1;
   border: none;
+  padding-top: 0;
 }
 
 .terminal .process:nth-of-type(2) {

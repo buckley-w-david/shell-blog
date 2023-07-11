@@ -1,4 +1,6 @@
 FROM python:3.10-slim
+# This Dockerfile exists because pandoc mermaid-filter is extremely finicky to get working
+# Instead of fighting to get it working (and keep it working), we just use this container as a build environment
 
 RUN apt-get update && \
     apt-get install -y build-essential curl git pandoc chromium && \
