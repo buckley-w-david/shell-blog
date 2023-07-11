@@ -24,8 +24,7 @@ export class TerminalController extends Controller {
       this.activeValue += 1;
     }
     this.refocus();
-
-    this.element.style = `--process-rows: ${Math.max(1, this.shellTargets.length-1)}; --process-columns: ${this.shellTargets.length > 1 ? 2 : 1}`
+    this.resetGrid();
   }
 
   swapLeft(event) {
@@ -61,12 +60,15 @@ export class TerminalController extends Controller {
       this.activeValue = Math.min(this.activeValue, this.shellTargets.length-1);
       this.refocus();
     }
-
-    this.element.style = `--process-rows: ${Math.max(1, this.shellTargets.length-1)}`
+    this.resetGrid();
   }
 
   refocus() {
     this.activeShell.querySelector(".entry").focus();
+  }
+
+  resetGrid() {
+    this.element.style = `--process-rows: ${Math.max(1, this.shellTargets.length-1)}; --process-columns: ${this.shellTargets.length > 1 ? 2 : 1}`
   }
 
   get activeShell() {
