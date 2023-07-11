@@ -44,12 +44,12 @@ body {
 
 .terminal {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
   /*
    * This var is dynamically set on the terminal element in JS
    * It was the only way I could find to get the behaviour I wanted
    */
   grid-template-rows: repeat(var(--process-rows), 1fr);
+  grid-template-columns: repeat(var(--process-columns), 1fr);
   flex: 1;
   border: none;
 }

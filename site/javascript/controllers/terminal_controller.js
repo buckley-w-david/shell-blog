@@ -25,7 +25,7 @@ export class TerminalController extends Controller {
     }
     this.refocus();
 
-    this.element.style = `--process-rows: ${Math.max(1, this.shellTargets.length-1)}`
+    this.element.style = `--process-rows: ${Math.max(1, this.shellTargets.length-1)}; --process-columns: ${this.shellTargets.length > 1 ? 2 : 1}`
   }
 
   swapLeft(event) {

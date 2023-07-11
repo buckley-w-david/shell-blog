@@ -14,7 +14,7 @@
   </head>
   <body data-controller="kernal" data-action="syscall@window->kernal#syscall" data-kernal-terminal-outlet=".terminal" data-kernal-shell-outlet=".shell">
     <div
-      class="terminal" id="terminal" style="--rows: 1;"
+      class="terminal" id="terminal" style="--process-rows: 1; --process-columns: 1;"
       data-controller="terminal"
       data-action="keydown.ctrl+shift+enter@window->terminal#spawn keydown.ctrl+shift+left@window->terminal#swapLeft keydown.ctrl+shift+right@window->terminal#swapRight keydown.ctrl+d@window->terminal#close"
       data-terminal-active-value="0"
