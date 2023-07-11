@@ -43,8 +43,11 @@ export class TerminalController extends Controller {
 
   activate(event) {
     let shell = event.target.closest(".shell");
-    this.activeValue = this.shellTargets.indexOf(shell);
-    this.refocus();
+    let activated = this.shellTargets.indexOf(shell);
+    if (activated !== this.activeValue) {
+      this.activeValue = activated;
+      this.refocus();
+    }
   }
 
   close(event) {
@@ -68,6 +71,7 @@ export class TerminalController extends Controller {
   }
 
   resetGrid() {
+    // Ugly hack to send data to css-land
     this.element.style = `--process-rows: ${Math.max(1, this.shellTargets.length-1)}; --process-columns: ${this.shellTargets.length > 1 ? 2 : 1}`
   }
 
