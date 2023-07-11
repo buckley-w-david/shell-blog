@@ -16,7 +16,13 @@ export function makeCommands(shell) {
   cd dirName - change working directory.
   help - you're looking at it.
   clear - clear the terminal screen
-  disable-tab-complete - Disables tab completion of filenames. Available for accessability purposes.\
+  disable-tab-complete - Disables tab completion of filenames. Available for accessability purposes.
+
+  Shortcuts
+  ctrl+shift+enter - spawn a new shell.
+  ctrl+shift+right - switch focus to the next shell.
+  ctrl+shift+left  - switch focus to the previous shell.
+  ctrl+d           - delete the current shell.\
   `;
 
   const response = (stdout, stderr, status) => {
