@@ -15,6 +15,13 @@ export class ShellController extends Controller {
   static values = { completeSelected: Number, completeMount: Number, pwd: String }
 
   initialize() {
+    this.history = [];
+    this.historyCursor = 0;
+    this.variables = {};
+    this.commands = makeCommands(this);
+    // FIXME This is a bad name
+    this.builtins = [...Object.keys(this.commands), "cd", "clear"];
+
     // FIXME this will run when spawning new shells instead of just at startup time in the first shell
     const params = new Proxy(new URLSearchParams(window.location.search), {
       get: (searchParams, prop) => searchParams.get(prop),
@@ -24,13 +31,6 @@ export class ShellController extends Controller {
       this.entryTarget.value = params.bashrc;
       this.execute();
     }
-
-    this.history = [];
-    this.historyCursor = 0;
-    this.variables = {};
-    this.commands = makeCommands(this);
-    // FIXME This is a bad name
-    this.builtins = [...Object.keys(this.commands), "cd", "clear"];
   }
 
   execute(event) {
