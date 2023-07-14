@@ -53,7 +53,8 @@
 
   let apple = takeEmpty();
 
-  let nextDir = { dx: 1, dy: 0 }
+  // let nextDir = { dx: 1, dy: 0 }
+  let moves = [];
   let snake = [
     { x: 0, y: 2, dx: 0, dy: 1 },
     { x: 0, y: 1, dx: 0, dy: 1 },
@@ -138,27 +139,27 @@
 
   // ================= Game Lifecycle =================
   const turn = (event) => {
-    let dir = { dx: snake[0].dx, dy: snake[0].dy };
+    let dir = moves.length ? moves[moves.length-1] : { dx: snake[0].dx, dy: snake[0].dy };
     switch (event.keyCode) {
       case 37:
         // Left
-        if (dir.dx === 1) return;
-        nextDir = { dx: -1, dy: 0 };
+        if (dir.dx !== 0) return;
+        moves.push({ dx: -1, dy: 0 });
         break;
       case 38:
         // Up
-        if (dir.dy === 1) return;
-        nextDir = { dx: 0, dy: -1 };
+        if (dir.dy !== 0) return;
+        moves.push({ dx: 0, dy: -1 });
         break;
       case 39:
         // Right
-        if (dir.dx === -1) return;
-        nextDir = { dx: 1, dy: 0 };
+        if (dir.dx !== 0) return;
+        moves.push({ dx: 1, dy: 0 });
         break;
       case 40:
         // Down
-        if (dir.dy === -1) return;
-        nextDir = { dx: 0, dy: 1 };
+        if (dir.dy !== 0) return;
+        moves.push({ dx: 0, dy: 1 });
         break;
     }
   };
@@ -219,6 +220,7 @@
 
   const tick = () => {
     let oldHead = snake[0];
+    let nextDir = moves.length ? moves.shift() : oldHead;
     let newHead = { x: oldHead.x+nextDir.dx, y: oldHead.y+nextDir.dy, dx: nextDir.dx, dy: nextDir.dy};
 
     snake.unshift(newHead);
