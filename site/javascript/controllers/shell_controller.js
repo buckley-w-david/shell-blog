@@ -125,7 +125,17 @@ export class ShellController extends Controller {
     const item = document.createElement("div");
     item.className = `status-${result.statusCode}`;
 
-    const resultPart = document.createElement("pre");
+    // Jank
+    // Markdown files go through a process I call "markupsidedown"
+    // This transforms them into html documents that _look_ like markdown
+    // As such, they shouldn't be displayed with just a pre tag
+    let resultPart;
+    if (command == "latest" || (command.slice(0, 4) === "cat " && command.slice(command.length-3, command.length) === ".md")) {
+      resultPart = document.createElement("div");
+      resultPart.className = "blog-post";
+    } else {
+      resultPart = document.createElement("pre");
+    }
     let content = "";
     if (result.stderr !== undefined) content += result.stderr + "\n";
 

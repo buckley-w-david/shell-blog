@@ -3,32 +3,36 @@ from collections import defaultdict
 from pathlib import Path
 from itertools import accumulate
 
-from blog_builder.utils import unique, commit_order
+from blog_builder.utils import unique, commit_order, markupsidedown
 
 IMAGE_FILE = {
-  ".webp",
-  ".png",
-  ".jpg",
+    ".webp",
+    ".png",
+    ".jpg",
 }
 
+
 def build():
-    files = commit_order(p for p in Path("site/filesystem").rglob("*") if p.is_file())
+    files = commit_order(p for p in Path(
+        "site/filesystem").rglob("*") if p.is_file())
 
     filesystem = {
-      "dirs": defaultdict(list),
-      "executables": [],
-      "files": {},
+        "dirs": defaultdict(list),
+        "executables": [],
+        "files": {},
     }
 
     acc = lambda *args: Path("/", *args)
     for file in files:
         local_path = Path("/", *file.parts[2:])
-        if local_path.suffix == '.js':
+        if local_path.suffix == ".js":
             local_path = local_path.with_suffix("")
             filesystem["executables"].append(str(local_path))
 
         # Create directory listings
-        parts = [Path(p) for p in accumulate(local_path.parts[1:-1], acc, initial="") if p]
+        parts = [
+            Path(p) for p in accumulate(local_path.parts[1:-1], acc, initial="") if p
+        ]
         for part in parts:
             filesystem["dirs"][str(part.parent)].append(part.name + "/")
 
@@ -36,10 +40,13 @@ def build():
 
         # Extract file contents
         if local_path.suffix in IMAGE_FILE:
-            filesystem["files"][str(local_path)] = "<img src=\"%s\">" % str(local_path)
+            filesystem["files"][str(local_path)
+                                ] = '<img src="%s">' % str(local_path)
         else:
             with open(file, "r") as f:
                 content = f.read()
+            if local_path.suffix == ".md":
+                content = markupsidedown(content)
             filesystem["files"][str(local_path)] = content
 
     # This is a poor implementation

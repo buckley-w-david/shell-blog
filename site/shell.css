@@ -142,3 +142,7 @@ img {
   -webkit-filter: invert(100%);
   filter: invert(100%);
 }
+
+.blog-post p:not(:last-child) {
+  margin-bottom: 1em;
+}

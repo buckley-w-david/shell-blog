@@ -8,6 +8,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.9"
 Jinja2 = "^3.1.2"
+mistletoe = "^1.4.0"
 
 [tool.poetry.dev-dependencies]
 
