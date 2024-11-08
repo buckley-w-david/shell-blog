@@ -6,8 +6,7 @@ import subprocess
 
 def origin(file):
     result = subprocess.run(
-        ["git", "log", "--follow", "--format=%ad",
-            "--date", "unix", str(file)],
+        ["git", "log", "--follow", "--format=%ad", "--date", "unix", str(file)],
         capture_output=True,
     )
     output = result.stdout.decode().strip()
@@ -88,8 +87,7 @@ def update_block(token: BlockToken):
             assert isinstance(child.children[0], RawText)
 
             child.children[0].content = (
-                "```" + child.language + "\n" +
-                child.children[0].content + "```"
+                "```" + child.language + "\n" + child.children[0].content + "```"
             )
         elif isinstance(child, BlockToken):
             update_block(child)

@@ -143,6 +143,6 @@ img {
   filter: invert(100%);
 }
 
-.blog-post p:not(:last-child) {
+.blog-post p:not(:last-child), .blog-post pre:has(> code):not(:last-child) {
   margin-bottom: 1em;
 }
