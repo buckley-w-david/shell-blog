@@ -129,10 +129,12 @@ export class ShellController extends Controller {
     // Markdown files go through a process I call "markupsidedown"
     // This transforms them into html documents that _look_ like markdown
     // As such, they shouldn't be displayed with just a pre tag
+    // TODO: Figure out a more elegant solution to this problem
+    //       Should commands wrap their own output? Then the jank would just be moved to `cat`
+    //       item.appendChild(content)?
     let resultPart;
     if (command == "latest" || (command.slice(0, 4) === "cat " && command.slice(command.length-3, command.length) === ".md")) {
       resultPart = document.createElement("div");
-      resultPart.className = "blog-post";
     } else {
       resultPart = document.createElement("pre");
     }

@@ -6,7 +6,8 @@ import subprocess
 
 def origin(file):
     result = subprocess.run(
-        ["git", "log", "--follow", "--format=%ad", "--date", "unix", str(file)],
+        ["git", "log", "--follow", "--format=%ad",
+            "--date", "unix", str(file)],
         capture_output=True,
     )
     output = result.stdout.decode().strip()
@@ -30,6 +31,22 @@ def unique(l):
 
 def title(path):
     return " ".join(path.stem.split("-")).title()
+
+
+class MarkupsidedownRenderer(HtmlRenderer):
+    def render_heading(self, token):
+        template = '<h{level} id="{id}">{inner}</h{level}>'
+        inner = self.render_inner(token)
+        slug = (
+            "".join(c for c in inner if c.isalnum() or c == " ")
+            .strip()
+            .replace(" ", "-")
+            .lower()
+        )
+        return template.format(level=token.level, inner=inner, id=slug)
+
+    def render_document(self, token) -> str:
+        return '<div class="markupsidedown">' + self.render_inner(token) + "</div>"
 
 
 def update_text(token: SpanToken):
@@ -87,7 +104,8 @@ def update_block(token: BlockToken):
             assert isinstance(child.children[0], RawText)
 
             child.children[0].content = (
-                "```" + child.language + "\n" + child.children[0].content + "```"
+                "```" + child.language + "\n" +
+                child.children[0].content + "```"
             )
         elif isinstance(child, BlockToken):
             update_block(child)
@@ -98,7 +116,7 @@ def update_block(token: BlockToken):
 
 
 def markupsidedown(text: str) -> str:
-    with HtmlRenderer() as renderer:
+    with MarkupsidedownRenderer() as renderer:
         doc = Document(text)
         update_block(doc)
         return renderer.render(doc)
