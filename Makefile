@@ -9,6 +9,7 @@ ready: pyproject.toml poetry.lock
 dist/index.html: $(shell find site -type f) ready
 	rm -rf dist/ build/
 	mkdir -p dist/blog
+	mkdir -p dist/incantations
 	mkdir -p dist/toys
 
 	# Generate HTML files for markdown files
