@@ -1,24 +1,18 @@
-[tool.poetry]
+[project]
 name = "blog-builder"
 version = "0.1.0"
 description = ""
-authors = ["David Buckley <david@davidbuckley.ca>"]
+authors = [{ name = "David Buckley", email = "david@davidbuckley.ca" }]
+requires-python = "~=3.9"
 license = "MIT"
+dependencies = ["Jinja2>=3.1.2,<4", "mistletoe>=1.4.0,<2"]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-Jinja2 = "^3.1.2"
-mistletoe = "^1.4.0"
+[project.scripts]
+build = "blog_builder.blog_builder:build"
 
-[tool.poetry.dev-dependencies]
-
-[tool.poetry.scripts]
-build-filesystem = "blog_builder.filesystem:build"
-build-alt-index = "blog_builder.alt_index:build"
-build-index = "blog_builder.index:build"
-build-toys = "blog_builder.toys:build"
-compile-markdown = "blog_builder.markdown:build"
+[dependency-groups]
+dev = []
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"

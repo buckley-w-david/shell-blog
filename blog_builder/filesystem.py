@@ -13,8 +13,7 @@ IMAGE_FILE = {
 
 
 def build():
-    files = commit_order(p for p in Path(
-        "site/filesystem").rglob("*") if p.is_file())
+    files = commit_order(p for p in Path("site/filesystem").rglob("*") if p.is_file())
 
     filesystem = {
         "dirs": defaultdict(list),
@@ -40,8 +39,7 @@ def build():
 
         # Extract file contents
         if local_path.suffix in IMAGE_FILE:
-            filesystem["files"][str(local_path)
-                                ] = '<img src="%s">' % str(local_path)
+            filesystem["files"][str(local_path)] = '<img src="%s">' % str(local_path)
         else:
             with open(file, "r") as f:
                 content = f.read()
@@ -57,5 +55,4 @@ def build():
         filesystem["dirs"][key] = list(unique(filesystem["dirs"][key]))
 
     # Little weird for a python function to emit javascript code, but it works
-    print("export const fileSystem = ", end="")
-    print(json.dumps(filesystem))
+    return "".join(["export const fileSystem = ", json.dumps(filesystem)])
