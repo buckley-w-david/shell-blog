@@ -43,7 +43,7 @@ If I have a `Thingy`, I want to get the right `Doohickey` for its `user` and `Ev
  end
 ```
 
-Depending on your need, this _will_ work. What you mind find though is that if you are working on collections of `Thingy`s, you miss the conveniences that a real `ActiveRecord` relationship gives you. The specific thing I wanted but could not easily have with this setup is preloading associations, a very useful feature to avoid the n+1 query problem while maintaining ergonomic use of models. It's just a nice feature, and when your relationships are hiding in ruby methods, you can't do the easy thing of `includes(:doohickey)` (or `preload` as we will see later).
+Depending on your need, this _will_ work. What you might find though is that if you are working on collections of `Thingy`s, you miss the conveniences that a real `ActiveRecord` relationship gives you. The specific thing I wanted but could not easily have with this setup is preloading associations, a very useful feature to avoid the n+1 query problem while maintaining ergonomic use of models. It's just a nice feature, and when your relationships are hiding in ruby methods, you can't do the easy thing of `includes(:doohickey)` (or `preload` as we will see later).
 
 Because we like preloading, this pushes us to reject orthodoxy and find another way.
 
