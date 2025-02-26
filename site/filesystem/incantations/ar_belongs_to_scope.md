@@ -1,8 +1,8 @@
-I recently found myself needing to construct a `belongs_to` [ActiveRecord](https://guides.rubyonrails.org/active_record_basics.html) Association from one model to another based both on information in that model, and information within another associated model.
+I recently found myself needing to construct a `belongs_to` [ActiveRecord association](https://guides.rubyonrails.org/association_basics.html#associations-overview) association from one model to another based both on information in that model, and information within another associated model.
 
 Trying to disentangle what I actually mean by that, I'll show you the solution that online resources (and LLM coding assistants) tried to convince me was _the_ way to do.
 
-For illustrative purposes, I will be trying to relate a `Thingy` to a `Doohickey`. A `Thingy` already `belongs_to` a `User` (one part of what we need, since a `Doohickey` also `belongs_to` a `User`), and an `EventPhase`. An `EventPhase` `belongs_to` and `Event`, which ultimately `has_many` `doohickies`.
+For illustrative purposes, I will be trying to relate a `Thingy` to a `Doohickey`. A `Thingy` already `belongs_to` a `User` (one part of what we need, since a `Doohickey` also `belongs_to` a `User`), and an `EventPhase`. An `EventPhase` `belongs_to` an `Event`, which ultimately `has_many` `doohickies`.
 
 ```ruby
 class User < ApplicationRecord
