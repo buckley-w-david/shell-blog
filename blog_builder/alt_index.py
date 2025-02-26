@@ -22,4 +22,15 @@ def build():
         href = local_path.with_suffix(".html")
         navigation.append((href, title))
 
-    return home.render(navigation=navigation)
+    incantation_files = commit_order(
+        p for p in Path("site/filesystem/incantations/").rglob("**/*.md") if p.is_file()
+    )
+
+    incantations = []
+    for file in incantation_files:
+        local_path = Path("/", *file.parts[2:])
+        title = " ".join(local_path.stem.split("-")).title()
+        href = local_path.with_suffix(".html")
+        incantations.append((href, title))
+
+    return home.render(navigation=navigation, incantations=incantations)

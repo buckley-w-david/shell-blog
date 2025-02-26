@@ -26,11 +26,16 @@
     <a id="home" href="/home.html">Home</a>
     <a id="term" href="/">Back to the Shell</a>
   </div>
-  <p>Yeah, the shell-as-a-blog thing is a bit much, I don’t blame you for
-  not wanting to bother with it.</p>
-  <p>You can find versions of all the “files” in the terminal here:</p>
+  <h2>Blog Posts</h2>
   <ul>
   {% for href, title in navigation %}
+    <li><a href="{{ href }}">{{ title }}</a></li>
+  {% endfor %}
+  </ul>
+  <h2>"Incantations"</h2>
+  <p>Short articles focused on showcasing some specific, useful, copy/pastable thing.</p>
+  <ul>
+  {% for href, title in incantations %}
     <li><a href="{{ href }}">{{ title }}</a></li>
   {% endfor %}
   </ul>
