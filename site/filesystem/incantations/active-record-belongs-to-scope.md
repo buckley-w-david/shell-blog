@@ -76,3 +76,5 @@ thingies = Thingy.preload(:event_phase, :doohicky).where(...)
 ```
 
 We must `preload` instead of `includes` (or `eager_load`) because [only preloading is supported for instance dependent associations](https://github.com/rails/rails/pull/42553).
+
+Unfortunately this method does come with at least one other downside that I've found. `Thingy.find_by(doohickey:)` silently does the "wrong thing". It will ignore the event part of the relationship, behaving the same as `Thingy.find_by(user: doohickey.user)`.
