@@ -85,6 +85,32 @@
     return !isNaN(str) && !isNaN(parseFloat(str))
   }
 
+  let cache = {};
+
+  const invalidateCache = label => {
+    delete cache[label];
+
+    if (label in spreadsheet.dependants === false)
+      return;
+
+    let history = new Set(label);
+    let stack = Array.from(spreadsheet.dependants[label]);
+    while (stack.length > 0) {
+      let label = stack.pop();
+      if (history.has(label)) {
+        console.log('Ahhhhhhhhhhhhhhh!');
+        cache = {};
+        return;
+      }
+      history.add(label);
+
+      if (label in spreadsheet.dependants)
+        stack.push(...spreadsheet.dependants[label])
+
+      delete cache[label];
+    }
+  };
+
   const handleCellUpdate = event => {
     let label = event.target.id;
     let row = parseInt(event.target.dataset.row);
@@ -96,6 +122,7 @@
       spreadsheet.rawValues[label] = event.target.value;
 
     recalculateDag(label, row+1, column+1);
+    invalidateCache(label);
   }
 
   const replaceWithFormula = event => {
@@ -104,31 +131,27 @@
     }
   }
 
+  const calculateCell = cellLabel => {
+    if (cellLabel in cache)
+      return cache[cellLabel];
+
+    let value;
+    if (cellLabel in spreadsheet.formula) {
+      let values = [];
+      if (cellLabel in spreadsheet.dependencies)
+        values = Array.from(spreadsheet.dependencies[cellLabel].values(), label => calculateCell(label));
+
+      value = spreadsheet.formula[cellLabel](...values);
+    } else {
+      value = spreadsheet.rawValues[cellLabel];
+    }
+
+    cache[cellLabel] = value;
+    return value
+  }
+
   const replaceWithValue = event => {
     let label = event.target.id;
-
-    // TODO: Durable cache between recalculations
-    //       Since we only support acyclic relationships it should be easy
-    //       to know when to invalidate a cache entry
-    let cache = {};
-    const calculateCell = cellLabel => {
-      if (cellLabel in cache)
-        return cache[cellLabel];
-
-      let value;
-      if (cellLabel in spreadsheet.formula) {
-        let values = [];
-        if (cellLabel in spreadsheet.dependencies)
-          values = Array.from(spreadsheet.dependencies[cellLabel].values(), label => calculateCell(label));
-
-        value = spreadsheet.formula[cellLabel](...values);
-      } else {
-        value = spreadsheet.rawValues[cellLabel];
-      }
-
-      cache[cellLabel] = value;
-      return value
-    }
 
     let value = calculateCell(label);
     if (value !== undefined)
