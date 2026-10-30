@@ -20,6 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
+      - name: Install pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
       - run: uv run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
